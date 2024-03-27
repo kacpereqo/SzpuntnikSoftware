@@ -2,6 +2,7 @@
 #include <Adafruit_Sensor.h>
 #include <Wire.h>
 #include "gy-521.hpp"
+#include "motor.hpp"
 
 Adafruit_MPU6050 mpu;
 
@@ -95,8 +96,6 @@ double accAngle(const sensors_event_t &acc, const char axis)
 {
     double angle = 0;
 
-    // combine axis and main axis
-
     if (axis == 'x' && accMainAxis == 'x')
     {
         angle = atan(acc.acceleration.y / sqrt(acc.acceleration.x * acc.acceleration.x + acc.acceleration.z * acc.acceleration.z));
@@ -189,6 +188,15 @@ void mpu_loop()
         degreeZ = 0.93 * (degreeZ + avgData.gyroZ * elapsedTime) + 0.07 * accAngle(a, 'z');
 
         lastTime = currentTime;
+
+        if (degreeX < -ACTIVATE_ANGLE || degreeX > ACTIVATE_ANGLE || degreeY < -ACTIVATE_ANGLE || degreeY > ACTIVATE_ANGLE || degreeZ < 0)
+        {
+            rotate(90);
+        }
+        else
+        {
+            rotate(0);
+        }
 
         delay(5);
     }
