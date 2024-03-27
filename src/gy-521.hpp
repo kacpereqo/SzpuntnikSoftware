@@ -1,23 +1,11 @@
 #pragma once
 
-#include <Adafruit_MPU6050.h>
-#include <Adafruit_Sensor.h>
-#include <Wire.h>
+#define GY_521_DEBUG
 
-void mpu_init();
-void mpu_loop();
+constexpr unsigned short GY_521_INIT_PRECISION = 1000;
+constexpr unsigned short DATA_SIZE = 25;
 
-constexpr int8_t DATA_SIZE = 20;
-constexpr int16_t GYRO_OFFSET_PRECISION = 10000;
-
-struct Position
-{
-    float x;
-    float y;
-    float z;
-};
-
-struct SensorData
+struct GY_521
 {
     float accelX;
     float accelY;
@@ -26,3 +14,13 @@ struct SensorData
     float gyroY;
     float gyroZ;
 };
+
+struct Data
+{
+    float x;
+    float y;
+    float z;
+};
+
+void mpu_init();
+void mpu_loop();

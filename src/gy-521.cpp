@@ -1,20 +1,39 @@
-#pragma once
-
+#include <Adafruit_MPU6050.h>
+#include <Adafruit_Sensor.h>
+#include <Wire.h>
 #include "gy-521.hpp"
-// #define MPU6050_DEBUG
-
-float offsetGyroX, offsetGyroY, offsetGyroZ;
 
 Adafruit_MPU6050 mpu;
 
-Position degrees;
-int8_t counter = 0;
-SensorData data[DATA_SIZE];
+float degreeY = 0;
+float degreeX = 0;
+float degreeZ = 0;
+
+float gyroOffsetX = 0;
+float gyroOffsetY = 0;
+float gyroOffsetZ = 0;
+
+float avgGyroX = 0;
+float avgGyroY = 0;
+float avgGyroZ = 0;
+
+bool fullData = false;
 
 unsigned long lastTime = 0;
+unsigned long currentTime = 0;
+
+unsigned short dataCounter = 0;
+
+Data dataArr[DATA_SIZE] = {};
+
+float radiansToDegrees(float radians)
+{
+    return radians * 180 / M_PI;
+}
 
 void mpu_init()
 {
+
     while (!Serial)
         delay(10);
 
@@ -28,27 +47,21 @@ void mpu_init()
             delay(10);
         }
     }
-    Serial.println("MPU6050 Found!");
 
-    // setupt motion detection
-    mpu.setHighPassFilter(MPU6050_HIGHPASS_0_63_HZ);
-    mpu.setMotionDetectionThreshold(1);
-    mpu.setMotionDetectionDuration(20);
-
-    sensors_event_t a, g, temp;
-    mpu.getEvent(&a, &g, &temp);
-
-    for (int i = 0; i < GYRO_OFFSET_PRECISION; i++)
+    for (size_t i = 0; i < GY_521_INIT_PRECISION; i++)
     {
+        sensors_event_t a, g, temp;
         mpu.getEvent(&a, &g, &temp);
-        offsetGyroX += g.gyro.x;
-        offsetGyroY += g.gyro.y;
-        offsetGyroZ += g.gyro.z;
+        gyroOffsetX += g.gyro.x;
+        gyroOffsetY += g.gyro.y;
+        gyroOffsetZ += g.gyro.z;
     }
 
-    offsetGyroX /= GYRO_OFFSET_PRECISION;
-    offsetGyroY /= GYRO_OFFSET_PRECISION;
-    offsetGyroZ /= GYRO_OFFSET_PRECISION;
+    gyroOffsetX /= GY_521_INIT_PRECISION;
+    gyroOffsetY /= GY_521_INIT_PRECISION;
+    gyroOffsetZ /= GY_521_INIT_PRECISION;
+
+    Serial.println("MPU6050 Found!");
 
     Serial.println("");
     delay(100);
@@ -56,84 +69,71 @@ void mpu_init()
 
 void mpu_loop()
 {
-
     sensors_event_t a, g, temp;
     mpu.getEvent(&a, &g, &temp);
 
-    counter = (counter + 1) % DATA_SIZE;
+    dataArr[dataCounter].x = g.gyro.x;
+    dataArr[dataCounter].y = g.gyro.y;
+    dataArr[dataCounter].z = g.gyro.z;
 
-    data[counter].accelX = a.acceleration.x;
-    data[counter].accelY = a.acceleration.y;
-    data[counter].accelZ = a.acceleration.z;
-    data[counter].gyroX = g.gyro.x;
-    data[counter].gyroY = g.gyro.y;
-    data[counter].gyroZ = g.gyro.z;
+    dataCounter = (dataCounter + 1) % DATA_SIZE;
 
-    float avgAccelX = 0;
-    float avgAccelY = 0;
-    float avgAccelZ = 0;
-
-    float avgGyroX = 0;
-    float avgGyroY = 0;
-    float avgGyroZ = 0;
-
-    for (auto j = 0; j < DATA_SIZE; j++)
+    for (size_t i = 0; i < DATA_SIZE; i++)
     {
-        avgAccelX += data[j].accelX;
-        avgAccelY += data[j].accelY;
-        avgAccelZ += data[j].accelZ;
-
-        avgGyroX += data[j].gyroX;
-        avgGyroY += data[j].gyroY;
-        avgGyroZ += data[j].gyroZ;
+        avgGyroX += dataArr[i].x;
+        avgGyroY += dataArr[i].y;
+        avgGyroZ += dataArr[i].z;
     }
 
-    // avgGyroX = ((floor(((avgGyroX / DATA_SIZE) - offsetGyroX) * 100)) / 10000) * 100;
-    // avgGyroY = ((floor(((avgGyroY / DATA_SIZE) - offsetGyroY) * 100)) / 10000) * 100;
-    // avgGyroZ = ((floor(((avgGyroZ / DATA_SIZE) - offsetGyroZ) * 100)) / 10000) * 100;
+    avgGyroX /= DATA_SIZE;
+    avgGyroY /= DATA_SIZE;
+    avgGyroZ /= DATA_SIZE;
 
-    avgGyroX = (avgGyroX / DATA_SIZE) - offsetGyroX;
-    avgGyroY = (avgGyroY / DATA_SIZE) - offsetGyroY;
-    avgGyroZ = (avgGyroZ / DATA_SIZE) - offsetGyroZ;
+    if (dataCounter == 24)
+    {
+        fullData = true;
+    }
 
-    unsigned long currentTime = millis();
-    unsigned long elapsedTime = currentTime - lastTime;
-
-    degrees.x += ((avgGyroX) * (elapsedTime / 1000.0));
-    degrees.y += ((avgGyroY) * (elapsedTime / 1000.0));
-    degrees.z += ((avgGyroZ) * (elapsedTime / 1000.0));
-
+    currentTime = millis();
+    float elapsedTime = (currentTime - lastTime);
     lastTime = currentTime;
 
-    delay(1);
+    if (fullData)
+    {
+        degreeX += (avgGyroX - gyroOffsetX) * elapsedTime;
+        degreeY += (avgGyroY - gyroOffsetY) * elapsedTime;
+        degreeZ += (avgGyroZ - gyroOffsetZ) * elapsedTime;
+    }
 
-    // #ifdef MPU6050_DEBUG
-    Serial.print("AccelX:");
-    Serial.print(avgAccelX / DATA_SIZE);
+#ifdef GY_521_DEBUG
+    Serial.print("");
+    Serial.print(a.acceleration.x);
     Serial.print(",");
-    Serial.print("AccelY:");
-    Serial.print(avgAccelY / DATA_SIZE);
+    Serial.print("");
+    Serial.print(a.acceleration.y);
     Serial.print(",");
-    Serial.print("AccelZ:");
-    Serial.print(avgAccelZ / DATA_SIZE);
+    Serial.print("");
+    Serial.print(a.acceleration.z);
     Serial.print(", ");
-    Serial.print("GyroX:");
-    Serial.print(avgGyroX - offsetGyroX, 5);
+    Serial.print("");
+    Serial.print(g.gyro.x - gyroOffsetX);
     Serial.print(",");
-    Serial.print("GyroY:");
-    Serial.print(avgGyroY - offsetGyroY, 5);
+    Serial.print("");
+    Serial.print(g.gyro.y - gyroOffsetY);
     Serial.print(",");
-    Serial.print("GyroZ:");
-    Serial.print(avgGyroZ - offsetGyroZ, 5);
+    Serial.print("");
+    Serial.print(g.gyro.z - gyroOffsetZ);
     Serial.print(", ");
-    Serial.print("DegreesX:");
-    Serial.print(degrees.x);
+    Serial.print("");
+    Serial.print(radiansToDegrees(degreeX) / 1000);
     Serial.print(",");
-    Serial.print("DegreesY:");
-    Serial.print(degrees.y);
+    Serial.print("");
+    Serial.print(radiansToDegrees(degreeY) / 1000);
     Serial.print(",");
-    Serial.print("DegreesZ:");
-    Serial.print(degrees.z);
+    Serial.print("");
+    Serial.print(radiansToDegrees(degreeZ) / 1000);
     Serial.println("");
-    // #endif
+    delay(30);
+
+#endif
 }
