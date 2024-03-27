@@ -1,21 +1,14 @@
+#include "gy-521.hpp"
 #include <Arduino.h>
 
-// put function declarations here:
-int myFunction(int, int);
-
-void setup()
+void setup(void)
 {
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
+    Serial.begin(115200);
+    mpu_init();
 }
 
 void loop()
 {
-  // put your main code here, to run repeatedly:
-}
 
-// put function definitions here:
-int myFunction(int x, int y)
-{
-  return x + y;
+    mpu_loop();
 }
