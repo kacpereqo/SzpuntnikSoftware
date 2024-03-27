@@ -9,6 +9,5 @@ void setup(void)
 
 void loop()
 {
-
   mpu_loop();
 }

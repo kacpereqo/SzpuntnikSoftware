@@ -24,7 +24,9 @@ unsigned long currentTime = 0;
 
 unsigned short dataCounter = 0;
 
-Data dataArr[DATA_SIZE] = {};
+char accMainAxis = '\0';
+
+GY_521 data[DATA_SIZE] = {};
 
 float radiansToDegrees(float radians)
 {
@@ -37,7 +39,7 @@ void mpu_init()
     while (!Serial)
         delay(10);
 
-    Serial.println("Adafruit MPU6050 test!");
+    Serial.println("MPU6050 FOUND!!!");
 
     if (!mpu.begin())
     {
@@ -48,6 +50,12 @@ void mpu_init()
         }
     }
 
+    Serial.println("MPU6050 CALIBRATING");
+
+    float tempAccX = 0;
+    float tempAccY = 0;
+    float tempAccZ = 0;
+
     for (size_t i = 0; i < GY_521_INIT_PRECISION; i++)
     {
         sensors_event_t a, g, temp;
@@ -55,54 +63,134 @@ void mpu_init()
         gyroOffsetX += g.gyro.x;
         gyroOffsetY += g.gyro.y;
         gyroOffsetZ += g.gyro.z;
+
+        tempAccX += a.acceleration.x;
+        tempAccY += a.acceleration.y;
+        tempAccZ += a.acceleration.z;
     }
 
+    if (tempAccX > tempAccY && tempAccX > tempAccZ)
+    {
+        accMainAxis = 'x';
+    }
+    else if (tempAccY > tempAccX && tempAccY > tempAccZ)
+    {
+        accMainAxis = 'y';
+    }
+    else
+    {
+        accMainAxis = 'z';
+    }
     gyroOffsetX /= GY_521_INIT_PRECISION;
     gyroOffsetY /= GY_521_INIT_PRECISION;
     gyroOffsetZ /= GY_521_INIT_PRECISION;
 
-    Serial.println("MPU6050 Found!");
-
+    Serial.println("MPU6050 CALIBRATED");
     Serial.println("");
+
     delay(100);
+}
+
+double accAngle(const sensors_event_t &acc, const char axis)
+{
+    double angle = 0;
+
+    // combine axis and main axis
+
+    if (axis == 'x' && accMainAxis == 'x')
+    {
+        angle = atan(acc.acceleration.y / sqrt(acc.acceleration.x * acc.acceleration.x + acc.acceleration.z * acc.acceleration.z));
+    }
+    else if (axis == 'y' && accMainAxis == 'y')
+    {
+        angle = atan(acc.acceleration.x / sqrt(acc.acceleration.y * acc.acceleration.y + acc.acceleration.z * acc.acceleration.z));
+    }
+    else if (axis == 'z' && accMainAxis == 'z')
+    {
+        angle = atan(sqrt(acc.acceleration.x * acc.acceleration.x + acc.acceleration.y * acc.acceleration.y) / acc.acceleration.z);
+    }
+    else if (axis == 'x' && accMainAxis == 'y')
+    {
+        angle = atan(acc.acceleration.z / sqrt(acc.acceleration.x * acc.acceleration.x + acc.acceleration.y * acc.acceleration.y));
+    }
+    else if (axis == 'x' && accMainAxis == 'z')
+    {
+        angle = atan(acc.acceleration.y / sqrt(acc.acceleration.x * acc.acceleration.x + acc.acceleration.z * acc.acceleration.z));
+    }
+    else if (axis == 'y' && accMainAxis == 'x')
+    {
+        angle = atan(acc.acceleration.z / sqrt(acc.acceleration.x * acc.acceleration.x + acc.acceleration.y * acc.acceleration.y));
+    }
+    else if (axis == 'y' && accMainAxis == 'z')
+    {
+        angle = atan(acc.acceleration.x / sqrt(acc.acceleration.y * acc.acceleration.y + acc.acceleration.z * acc.acceleration.z));
+    }
+    else if (axis == 'z' && accMainAxis == 'x')
+    {
+        angle = atan(sqrt(acc.acceleration.y * acc.acceleration.y + acc.acceleration.z * acc.acceleration.z) / acc.acceleration.x);
+    }
+    else if (axis == 'z' && accMainAxis == 'y')
+    {
+        angle = atan(sqrt(acc.acceleration.x * acc.acceleration.x + acc.acceleration.z * acc.acceleration.z) / acc.acceleration.y);
+    }
+
+    return angle * 180 / M_PI;
 }
 
 void mpu_loop()
 {
     sensors_event_t a, g, temp;
+
+    GY_521 avgData = {};
+
     mpu.getEvent(&a, &g, &temp);
 
-    dataArr[dataCounter].x = g.gyro.x;
-    dataArr[dataCounter].y = g.gyro.y;
-    dataArr[dataCounter].z = g.gyro.z;
+    data[dataCounter].accelX = a.acceleration.x;
+    data[dataCounter].accelY = a.acceleration.y;
+    data[dataCounter].accelZ = a.acceleration.z;
+
+    data[dataCounter].gyroX = g.gyro.x - gyroOffsetX;
+    data[dataCounter].gyroY = g.gyro.y - gyroOffsetY;
+    data[dataCounter].gyroZ = g.gyro.z - gyroOffsetZ;
 
     dataCounter = (dataCounter + 1) % DATA_SIZE;
 
-    for (size_t i = 0; i < DATA_SIZE; i++)
-    {
-        avgGyroX += dataArr[i].x;
-        avgGyroY += dataArr[i].y;
-        avgGyroZ += dataArr[i].z;
-    }
-
-    avgGyroX /= DATA_SIZE;
-    avgGyroY /= DATA_SIZE;
-    avgGyroZ /= DATA_SIZE;
-
-    if (dataCounter == 24)
+    if (dataCounter == DATA_SIZE - 1)
     {
         fullData = true;
     }
 
-    currentTime = millis();
-    float elapsedTime = (currentTime - lastTime);
-    lastTime = currentTime;
-
     if (fullData)
     {
-        degreeX += (avgGyroX - gyroOffsetX) * elapsedTime;
-        degreeY += (avgGyroY - gyroOffsetY) * elapsedTime;
-        degreeZ += (avgGyroZ - gyroOffsetZ) * elapsedTime;
+        for (size_t i = 0; i < DATA_SIZE; i++)
+        {
+            avgData.accelX += data[i].accelX;
+            avgData.accelY += data[i].accelY;
+            avgData.accelZ += data[i].accelZ;
+
+            avgData.gyroX += data[i].gyroX;
+            avgData.gyroY += data[i].gyroY;
+            avgData.gyroZ += data[i].gyroZ;
+        }
+
+        avgData.accelX /= DATA_SIZE;
+        avgData.accelY /= DATA_SIZE;
+        avgData.accelZ /= DATA_SIZE;
+
+        avgData.gyroX /= DATA_SIZE;
+        avgData.gyroY /= DATA_SIZE;
+        avgData.gyroZ /= DATA_SIZE;
+
+        currentTime = millis();
+        float elapsedTime = (currentTime - lastTime) / 1000.0;
+
+        degreeX = 0.93 * (degreeX + avgData.gyroX * elapsedTime) + 0.07 * accAngle(a, 'x');
+        degreeY = 0.93 * (degreeY + avgData.gyroY * elapsedTime) + 0.07 * accAngle(a, 'y');
+        degreeZ = 0.93 * (degreeZ + avgData.gyroZ * elapsedTime) + 0.07 * accAngle(a, 'z');
+
+        lastTime = currentTime;
+
+        delay(5);
     }
 
 #ifdef GY_521_DEBUG
@@ -125,13 +213,13 @@ void mpu_loop()
     Serial.print(g.gyro.z - gyroOffsetZ);
     Serial.print(", ");
     Serial.print("");
-    Serial.print(radiansToDegrees(degreeX) / 1000);
-    Serial.print(",");
-    Serial.print("");
-    Serial.print(radiansToDegrees(degreeY) / 1000);
-    Serial.print(",");
-    Serial.print("");
-    Serial.print(radiansToDegrees(degreeZ) / 1000);
+    Serial.print("degx:");
+    Serial.print(degreeX);
+    Serial.print(", degy:");
+    Serial.print(degreeY);
+    Serial.print(", degz:");
+    Serial.print(degreeZ);
+
     Serial.println("");
     delay(30);
 

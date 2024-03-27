@@ -1,9 +1,10 @@
 #pragma once
 
-#define GY_521_DEBUG
+// uncomment for debugging
+// #define GY_521_DEBUG
 
-constexpr unsigned short GY_521_INIT_PRECISION = 1000;
-constexpr unsigned short DATA_SIZE = 25;
+constexpr unsigned short GY_521_INIT_PRECISION = 100;
+constexpr unsigned short DATA_SIZE = 20;
 
 struct GY_521
 {
