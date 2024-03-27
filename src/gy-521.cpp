@@ -37,21 +37,21 @@ float radiansToDegrees(float radians)
 void mpu_init()
 {
 
-    while (!Serial)
-        delay(10);
+    // while (!Serial)
+    delay(10);
 
-    Serial.println("MPU6050 FOUND!!!");
+    // Serial.println("MPU6050 FOUND!!!");
 
     if (!mpu.begin())
     {
-        Serial.println("Failed to find MPU6050 chip");
+        // Serial.println("Failed to find MPU6050 chip");
         while (1)
         {
             delay(10);
         }
     }
 
-    Serial.println("MPU6050 CALIBRATING");
+    // Serial.println("MPU6050 CALIBRATING");
 
     float tempAccX = 0;
     float tempAccY = 0;
@@ -86,8 +86,8 @@ void mpu_init()
     gyroOffsetY /= GY_521_INIT_PRECISION;
     gyroOffsetZ /= GY_521_INIT_PRECISION;
 
-    Serial.println("MPU6050 CALIBRATED");
-    Serial.println("");
+    // Serial.println("MPU6050 CALIBRATED");
+    // Serial.println("");
 
     delay(100);
 }

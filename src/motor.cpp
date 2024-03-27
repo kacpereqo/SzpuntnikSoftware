@@ -29,9 +29,9 @@ void motor_init()
 
 void rotate(int angle)
 {
-    Serial.print("rotated ");
-    Serial.print(angle);
-    Serial.print(" ");
+    // Serial.print("rotated ");
+    // Serial.print(angle);
+    // Serial.print(" ");
 
     myservo.write(angle);
     // delay(50);
