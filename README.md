@@ -6,8 +6,8 @@ first iteration of computer was pure testing we were using **MPU6050** IMU only 
 
 
 <img align="right" width=350 height=450 src="https://github.com/kacpereqo/SzpuntnikSoftware/assets/61110867/c11626c8-eae2-45cc-be92-d26091f3aa3f" alt="image" />
-<img width=546 height=225 src="https://github.com/kacpereqo/SzpuntnikSoftware/assets/61110867/dc93066b-1286-4ea6-974a-fa30a72a17e2" alt="image" />
-<img  width=546  height=225 src="https://github.com/kacpereqo/SzpuntnikSoftware/assets/61110867/d4718b06-4121-44ff-9485-954d8a5c131f" alt="image" />
+<img width=450 height=225 src="https://github.com/kacpereqo/SzpuntnikSoftware/assets/61110867/dc93066b-1286-4ea6-974a-fa30a72a17e2" alt="image" />
+<img  width=450  height=225 src="https://github.com/kacpereqo/SzpuntnikSoftware/assets/61110867/d4718b06-4121-44ff-9485-954d8a5c131f" alt="image" />
 
 
 ### flights
