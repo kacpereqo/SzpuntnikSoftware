@@ -1,8 +1,8 @@
 # Szpuntnik software
-Software made for Arduino uno r4 manima on-board computer for rocket named **Szpuntnik**
+Software made for Arduino uno r4 minima on-board computer for rocket named **Szpuntnik**
  
 ## v1
-first iteration of computer was pure testing we were using **MPU6050** IMU only with gyroscope and accelerometer to detect apogee and deploy recovery system. Everything was just fine until rocket exploded 💥
+the first iteration of the computer was pure testing we were using **MPU6050** IMU only with a gyroscope and accelerometer to detect apogee and deploy the recovery system. Everything was just fine until the rocket exploded 💥
 
 
 <img align="right" width=350 height=450 src="https://github.com/kacpereqo/SzpuntnikSoftware/assets/61110867/c11626c8-eae2-45cc-be92-d26091f3aa3f" alt="image" />
