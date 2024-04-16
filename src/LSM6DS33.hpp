@@ -1,5 +1,5 @@
-#ifndef LSM6DS33_H
-#define LSM6DS33_H
+#ifndef LSM6DS33_HPP
+#define LSM6DS33_HPP
 
 /*
 DATA SHEET:
