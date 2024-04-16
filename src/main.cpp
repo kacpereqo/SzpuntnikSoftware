@@ -1,4 +1,3 @@
-
 #include <Wire.h>
 #include "LSM6DS33.hpp"
 
