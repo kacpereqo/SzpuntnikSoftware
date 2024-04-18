@@ -3,6 +3,7 @@
 #include "LSM6DS33.hpp"
 #include "LPS25H.hpp"
 #include "magnetometer.hpp"
+#include "rotation.hpp"
 
 void setup()
 {
