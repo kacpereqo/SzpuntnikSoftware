@@ -8,6 +8,16 @@ https://pdf1.alldatasheet.com/datasheet-pdf/download/880694/STMICROELECTRONICS/L
 
 #include <LSM6.h>
 
+constexpr size_t CALIBRATION_SAMPLES = 500;
+constexpr size_t AVG_SAMPLES = 10;
+
+struct Data
+{
+    float x;
+    float y;
+    float z;
+};
+
 struct LSM6DS33
 {
     enum class GyroScale : uint8_t
@@ -56,12 +66,16 @@ struct LSM6DS33
         Hz6660,
     };
 
-    using Data = std::array<float, 3>;
+    Data gyroOffset;
+    Data accelOffset;
 
     LSM6DS33();
 
     void configureGyro(GyroScale scale, GyroRate rate);
     void configureAccel(AccelScale scale, AccelRate rate);
+
+    void calibrateGyro();
+    void calibrateAccel();
 
     Data readAccel();
     Data readGyro();

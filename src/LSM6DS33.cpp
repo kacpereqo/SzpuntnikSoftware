@@ -1,6 +1,5 @@
 #include "LSM6DS33.hpp"
 #include <LSM6.h>
-
 LSM6DS33::LSM6DS33()
 {
     if (!imu.init())
@@ -10,8 +9,63 @@ LSM6DS33::LSM6DS33()
             ;
     }
     imu.enableDefault();
-    configureAccel(AccelScale::g2, AccelRate::Hz1660);
-    configureGyro(GyroScale::dps245, GyroRate::Hz1660);
+    Serial.println("IMU initialized");
+
+    calibrateGyro();
+}
+
+void LSM6DS33::calibrateGyro()
+{
+    Serial.println("Calibrating Gyro...");
+
+    Data data = {0, 0, 0};
+
+    for (size_t i = 0; i < CALIBRATION_SAMPLES; i++)
+    {
+        Data temp = readGyro();
+        data.x += temp.x;
+        data.y += temp.y;
+        data.z += temp.z;
+    }
+
+    gyroOffset.x = data.x / CALIBRATION_SAMPLES;
+    gyroOffset.y = data.y / CALIBRATION_SAMPLES;
+    gyroOffset.z = data.z / CALIBRATION_SAMPLES;
+
+    for (size_t i = 0; i < AVG_SAMPLES; i++)
+    {
+        Data temp = readGyro();
+        data.x += temp.x;
+        data.y += temp.y;
+        data.z += temp.z;
+    }
+}
+
+void LSM6DS33::calibrateAccel()
+{
+    Serial.println("Calibrating Accel...");
+
+    Data data = {0, 0, 0};
+
+    for (size_t i = 0; i < CALIBRATION_SAMPLES; i++)
+    {
+        Data temp = readAccel();
+        data.x += temp.x;
+        data.y += temp.y;
+        data.z += temp.z;
+    }
+
+    accelOffset.x = data.x / CALIBRATION_SAMPLES;
+    accelOffset.y = data.y / CALIBRATION_SAMPLES;
+    accelOffset.z = data.z / CALIBRATION_SAMPLES;
+
+    for (size_t i = 0; i < AVG_SAMPLES; i++)
+    {
+        Data temp = readAccel();
+        data.x += temp.x;
+        data.y += temp.y;
+        data.z += temp.z;
+    }
 }
 
 void LSM6DS33::configureGyro(GyroScale scale, GyroRate rate)
@@ -49,7 +103,7 @@ void LSM6DS33::configureAccel(AccelScale scale, AccelRate rate)
     imu.writeReg(LSM6::CTRL1_XL, CTRL1_XL_VALUE);
 }
 
-LSM6DS33::Data LSM6DS33::readAccel()
+Data LSM6DS33::readAccel()
 {
     imu.readAcc();
 
@@ -78,14 +132,14 @@ LSM6DS33::Data LSM6DS33::readAccel()
         imu.a.z / divide_factor};
 }
 
-LSM6DS33::Data LSM6DS33::readGyro()
+Data LSM6DS33::readGyro()
 {
     imu.readGyro();
 
     const float divide_factor = 245;
 
     return {
-        imu.g.x / divide_factor,
-        imu.g.y / divide_factor,
-        imu.g.z / divide_factor};
+        (imu.g.x - gyroOffset.x) / divide_factor,
+        (imu.g.y - gyroOffset.y) / divide_factor,
+        (imu.g.z - gyroOffset.z) / divide_factor};
 }

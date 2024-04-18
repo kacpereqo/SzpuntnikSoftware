@@ -15,10 +15,7 @@ void setup()
 
 void loop()
 {
-  static int count = 0;
-  for (;;)
-  {
-    Serial.println(count++);
-    delay(10);
-  }
+  static Rotation rotation;
+
+  rotation.updateRotation();
 }

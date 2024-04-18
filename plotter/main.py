@@ -3,7 +3,7 @@ import configparser
 import serial
 import serial.tools.list_ports
 import uvicorn
-from fastapi import FastAPI, WebSocket
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 
 app = FastAPI()
 
@@ -20,6 +20,7 @@ async def websocket_endpoint(websocket: WebSocket):
 
     ports = list(serial.tools.list_ports.comports())
     for p in ports:
+        print(p)
         if p.product is None:
             continue
         if p.product.lower() == env_name:
@@ -34,9 +35,14 @@ async def websocket_endpoint(websocket: WebSocket):
     print("Connected to serial port")
     print(ser.readline().decode("utf-8").strip())
     while True:
-        data = ser.readline().decode("utf-8").strip()
-        await websocket.send_text(data)
+        try:
+            data = ser.readline().decode("utf-8").strip()
+            await websocket.send_text(data)
+        except WebSocketDisconnect:
+            ser.close()
+            break
 
 
 if __name__ == "__main__":
+
     uvicorn.run("main:app", reload=True)
