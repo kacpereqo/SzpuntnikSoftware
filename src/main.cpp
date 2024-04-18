@@ -2,6 +2,7 @@
 #include <Wire.h>
 #include "LSM6DS33.hpp"
 #include "LPS25H.hpp"
+#include "magnetometer.hpp"
 
 void setup()
 {
@@ -13,11 +14,10 @@ void setup()
 
 void loop()
 {
-  // static LSM6DS33 imu;
-  static LPS25H ps;
-
-  auto data = ps.readAltitude();
-  Serial.print("alltitude: ");
-  Serial.print(data);
-  Serial.println();
+  static int count = 0;
+  for (;;)
+  {
+    Serial.println(count++);
+    delay(10);
+  }
 }
