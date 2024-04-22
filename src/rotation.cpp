@@ -23,8 +23,8 @@ void Rotation::complementaryFilter()
     float rollAcc = atan2(accel.x, sqrt(accel.y * accel.y + accel.z * accel.z)) * RAD_TO_DEG;
 
     x = 0.95 * (x + gyro.x * dt) + 0.05 * pitchAcc;
-    y = 0.95 * (y + gyro.y * dt) + 0.05 * rollAcc;
-    z = gyro.z;
+    y += gyro.y * dt;
+    z = 0.95 * (z + gyro.z * dt) + 0.05 * rollAcc;
 }
 
 void Rotation::updateRotation()

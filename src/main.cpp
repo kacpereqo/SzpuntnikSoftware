@@ -15,6 +15,8 @@ void setup()
 
 void loop()
 {
+  // Magnetometer magnetometer;
+  // magnetometer.compass();
   static Rotation rotation;
 
   rotation.updateRotation();
