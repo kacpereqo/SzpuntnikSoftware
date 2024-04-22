@@ -1,7 +1,7 @@
 #ifndef ROTATION_HPP
 #define ROTATION_HPP
 
-#include "LSM6DS33.hpp"
+#include "sensors/LSM6DS33.hpp"
 
 struct Rotation
 {

@@ -1,6 +1,6 @@
 #include <Servo.h>
 #include <Arduino.h>
-#include "motor.hpp"
+#include "parachute/motor.hpp"
 
 Servo myservo;
 

@@ -1,9 +1,6 @@
 
 #include <Wire.h>
-#include "LSM6DS33.hpp"
-#include "LPS25H.hpp"
-#include "magnetometer.hpp"
-#include "rotation.hpp"
+#include "sensors/magnetometer.hpp"
 
 void setup()
 {
@@ -15,9 +12,7 @@ void setup()
 
 void loop()
 {
-  // Magnetometer magnetometer;
-  // magnetometer.compass();
-  static Rotation rotation;
+  Magnetometer mag;
 
-  rotation.updateRotation();
+  mag.compass();
 }

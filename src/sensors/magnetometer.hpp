@@ -13,10 +13,16 @@ struct Magnetometer
         gauss16,
     };
 
-    using Data = std::array<float, 3>;
+    struct Data
+    {
+        float x;
+        float y;
+        float z;
+    };
 
     Magnetometer();
     Data readMag();
+    Data readNormalizeData();
     void compass();
 
 private:
