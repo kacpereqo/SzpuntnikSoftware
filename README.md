@@ -26,7 +26,8 @@ the first iteration of the computer was pure testing we were using **MPU6050** I
 ### Appliances list
   - AltIMU-10 v5 (10 DOF)
     - Barometer: LPS25H
-    - Accelerometer + Gyro: LSM6DS33;
+    - Accelerometer + Gyro: LSM6DS33
+    - Magnetometer LIS3MDL
   - Servo MG90
   - GPS GY-NEO6M 
   - SD card reader
