@@ -12,60 +12,55 @@ LSM6DS33::LSM6DS33()
     Serial.println("IMU initialized");
 
     calibrateGyro();
+    calibrateAccel();
 }
 
 void LSM6DS33::calibrateGyro()
 {
     Serial.println("Calibrating Gyro...");
 
-    Data data = {0, 0, 0};
+    Vec3 data = {0, 0, 0};
 
     for (size_t i = 0; i < CALIBRATION_SAMPLES; i++)
     {
-        Data temp = readGyro();
-        data.x += temp.x;
-        data.y += temp.y;
-        data.z += temp.z;
+        Vec3 gyro = this->readGyro();
+
+        data.x += gyro.x;
+        data.y += gyro.y;
+        data.z += gyro.z;
+
+        delay(1);
     }
+
+    Serial.println("Calibration done");
 
     gyroOffset.x = data.x / CALIBRATION_SAMPLES;
     gyroOffset.y = data.y / CALIBRATION_SAMPLES;
     gyroOffset.z = data.z / CALIBRATION_SAMPLES;
-
-    for (size_t i = 0; i < AVG_SAMPLES; i++)
-    {
-        Data temp = readGyro();
-        data.x += temp.x;
-        data.y += temp.y;
-        data.z += temp.z;
-    }
 }
 
 void LSM6DS33::calibrateAccel()
 {
     Serial.println("Calibrating Accel...");
 
-    Data data = {0, 0, 0};
+    Vec3 data = {0, 0, 0};
 
     for (size_t i = 0; i < CALIBRATION_SAMPLES; i++)
     {
-        Data temp = readAccel();
-        data.x += temp.x;
-        data.y += temp.y;
-        data.z += temp.z;
+        Vec3 accel = this->readAccel();
+
+        data.x += accel.x;
+        data.y += accel.y;
+        data.z += accel.z;
+
+        delay(1);
     }
+
+    Serial.println("Calibration done");
 
     accelOffset.x = data.x / CALIBRATION_SAMPLES;
     accelOffset.y = data.y / CALIBRATION_SAMPLES;
     accelOffset.z = data.z / CALIBRATION_SAMPLES;
-
-    for (size_t i = 0; i < AVG_SAMPLES; i++)
-    {
-        Data temp = readAccel();
-        data.x += temp.x;
-        data.y += temp.y;
-        data.z += temp.z;
-    }
 }
 
 void LSM6DS33::configureGyro(GyroScale scale, GyroRate rate)
@@ -103,43 +98,45 @@ void LSM6DS33::configureAccel(AccelScale scale, AccelRate rate)
     imu.writeReg(LSM6::CTRL1_XL, CTRL1_XL_VALUE);
 }
 
-Data LSM6DS33::readAccel()
+Vec3 LSM6DS33::readAccel()
 {
     imu.readAcc();
 
-    uint8_t temp;
+    uint8_t scale;
     switch (current_accel_scale)
     {
     case AccelScale::g2:
-        temp = 0;
+        scale = 0;
         break;
     case AccelScale::g4:
-        temp = 1;
+        scale = 1;
         break;
     case AccelScale::g8:
-        temp = 2;
+        scale = 2;
         break;
     case AccelScale::g16:
-        temp = 3;
+        scale = 3;
         break;
     }
 
-    const float divide_factor = (1 << (14 - temp));
+    const float divide_factor = (1 << (14 - scale));
 
     return {
         imu.a.x / divide_factor,
         imu.a.y / divide_factor,
-        imu.a.z / divide_factor};
+        imu.a.z / divide_factor,
+    };
 }
 
-Data LSM6DS33::readGyro()
+Vec3 LSM6DS33::readGyro()
 {
     imu.readGyro();
 
-    const float divide_factor = 245;
+    constexpr float divide_factor = 245;
 
     return {
         (imu.g.x - gyroOffset.x) / divide_factor,
         (imu.g.y - gyroOffset.y) / divide_factor,
-        (imu.g.z - gyroOffset.z) / divide_factor};
+        (imu.g.z - gyroOffset.z) / divide_factor,
+    };
 }

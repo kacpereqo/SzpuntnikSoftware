@@ -2,6 +2,7 @@
 #define LIS3MDL_HPP
 
 #include <LIS3MDL.h>
+#include "vec3.hpp"
 
 struct Magnetometer
 {
@@ -21,9 +22,7 @@ struct Magnetometer
     };
 
     Magnetometer();
-    Data readMag();
-    Data readNormalizeData();
-    void compass();
+    Vec3 readMag();
 
 private:
     LIS3MDL mag;

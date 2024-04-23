@@ -1,6 +1,6 @@
 
 #include <Wire.h>
-#include "sensors/magnetometer.hpp"
+#include "imu.hpp"
 
 void setup()
 {
@@ -12,7 +12,16 @@ void setup()
 
 void loop()
 {
-  Magnetometer mag;
+  static Imu imu;
 
-  mag.compass();
+  imu.update();
+
+  Serial.print("Pitch: ");
+  Serial.print(imu.pitch);
+  Serial.print(" Yaw: ");
+  Serial.print(imu.yaw);
+  Serial.print(" Roll: ");
+  Serial.print(imu.roll);
+  Serial.print(" Preassure: ");
+  Serial.println(imu.preassure);
 }

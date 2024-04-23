@@ -3,6 +3,7 @@
 
 LPS25H::LPS25H()
 {
+    Serial.println("Initializing pressure sensor...");
     if (!ps.init())
     {
         Serial.println("Failed to autodetect pressure sensor!");
@@ -11,19 +12,23 @@ LPS25H::LPS25H()
     }
 
     ps.enableDefault();
+    Serial.println("Pressure sensor initialized");
 }
 
-LPS25H::Data LPS25H::readPressure()
+float LPS25H::readPressure()
 {
     return ps.readPressureMillibars();
 }
 
-LPS25H::Data LPS25H::readAltitude()
+float LPS25H::readAlltitude(float pressure)
 {
-    return ps.pressureToAltitudeMeters(ps.readPressureMillibars());
+    // TODO:
+    // setting the sea level pressure to 1013.25 hPa is a temporary solution
+    // this should obtained during the calibration process
+    return ps.pressureToAltitudeMeters(pressure, 1013.25);
 }
 
-LPS25H::Data LPS25H::readTemperature()
+float LPS25H::readTemperature()
 {
     return ps.readTemperatureC();
 }

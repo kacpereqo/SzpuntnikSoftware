@@ -7,16 +7,9 @@ https://pdf1.alldatasheet.com/datasheet-pdf/download/880694/STMICROELECTRONICS/L
 */
 
 #include <LSM6.h>
+#include "Vec3.hpp"
 
 constexpr size_t CALIBRATION_SAMPLES = 500;
-constexpr size_t AVG_SAMPLES = 10;
-
-struct Data
-{
-    float x;
-    float y;
-    float z;
-};
 
 struct LSM6DS33
 {
@@ -66,8 +59,8 @@ struct LSM6DS33
         Hz6660,
     };
 
-    Data gyroOffset;
-    Data accelOffset;
+    Vec3 gyroOffset;
+    Vec3 accelOffset;
 
     LSM6DS33();
 
@@ -77,11 +70,14 @@ struct LSM6DS33
     void calibrateGyro();
     void calibrateAccel();
 
-    Data readAccel();
-    Data readGyro();
+    Vec3 readAccel();
+    Vec3 readGyro();
 
 private:
     LSM6 imu;
+
+    // TODO:
+    // read scale from registers
     GyroScale current_gyro_scale = GyroScale::dps245;
     AccelScale current_accel_scale = AccelScale::g2;
 };

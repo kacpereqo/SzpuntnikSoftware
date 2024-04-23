@@ -10,8 +10,6 @@ https://pdf1.alldatasheet.com/datasheet-pdf/view/929259/STMICROELECTRONICS/LPS25
 
 struct LPS25H
 {
-    using Data = float;
-
     enum class PressureRate : uint8_t
     {
         Hz1,
@@ -23,9 +21,9 @@ struct LPS25H
     LPS25H();
     void configurePressure();
     void configureTemperature();
-    Data readPressure();
-    Data readAltitude();
-    Data readTemperature();
+    float readAlltitude(float pressure);
+    float readPressure();
+    float readTemperature();
 
 private:
     LPS ps;
