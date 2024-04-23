@@ -8,6 +8,11 @@ Imu::Imu()
     imu.configureGyro(LSM6DS33::GyroScale::dps245, LSM6DS33::GyroRate::Hz1660);
 }
 
+void Imu::calibrate()
+{
+    imu.calibrateGyro();
+}
+
 void Imu::calculateRollAndPitch()
 {
 
@@ -74,4 +79,16 @@ void Imu::update()
     calculateYaw();
     calculateAlltitude();
     calculateRollAndPitch();
+}
+
+void Imu::readings()
+{
+    Serial.print("Pitch: ");
+    Serial.print(this->pitch);
+    Serial.print(" Roll: ");
+    Serial.print(this->roll);
+    Serial.print(" Yaw: ");
+    Serial.print(this->yaw);
+    Serial.print(" Altitude: ");
+    Serial.println(this->altitude);
 }

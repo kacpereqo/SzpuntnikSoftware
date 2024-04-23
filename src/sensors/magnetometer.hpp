@@ -2,7 +2,7 @@
 #define LIS3MDL_HPP
 
 #include <LIS3MDL.h>
-#include "vec3.hpp"
+#include "vec.hpp"
 
 struct Magnetometer
 {

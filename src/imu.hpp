@@ -13,7 +13,11 @@ struct Imu
     float preassure = 0;
     float altitude = 0;
 
+    Vec3<float> accel{};
+
+    void calibrate();
     void update();
+    void readings();
     Imu();
 
 private:
@@ -22,7 +26,6 @@ private:
     Magnetometer magnetometer; // Magnetometer
 
     // sensor readings
-    Vec3<float> accel{};
     Vec3<float> gyro{};
     Vec3<int16_t> mag{};
 

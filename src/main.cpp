@@ -1,6 +1,7 @@
 
 #include <Wire.h>
 #include "imu.hpp"
+#include "disk.hpp"
 
 void setup()
 {
@@ -9,10 +10,10 @@ void setup()
   while (!Serial)
     ;
 }
-
 enum class State
 {
   calibration,
+  waitingForTakeoff,
   flight,
   falling,
   landed,
@@ -21,17 +22,78 @@ enum class State
 void loop()
 {
   static Imu imu;
+  static Disk disk;
 
-  imu.update();
+  static State state = State::calibration;
 
-  Serial.print("Pitch: ");
-  Serial.print(imu.pitch);
-  Serial.print(" Yaw: ");
-  Serial.print(imu.yaw);
-  Serial.print(" Roll: ");
-  Serial.print(imu.roll);
-  Serial.print(" Preassure: ");
-  Serial.print(imu.preassure);
-  Serial.print(" Alltitude: ");
-  Serial.println(imu.altitude);
+  switch (state)
+  {
+  case State::calibration:
+    imu.calibrate();
+    state = State::waitingForTakeoff;
+
+  case State::waitingForTakeoff:
+
+    constexpr int interval = 200;                // in milliseconds
+    constexpr float accelerationThreshold = 0.1; // in g force
+
+    static long lastUpdate = millis();
+    static float lastAcceleration = imu.accel.x;
+
+    if (millis() - lastUpdate > interval)
+    {
+      if (lastAcceleration - imu.accel.x < accelerationThreshold)
+      {
+        state = State::flight;
+      }
+      lastAcceleration = imu.accel.x;
+    }
+
+    break;
+  case State::flight:
+
+    constexpr int interval = 200; // in milliseconds
+    constexpr float altitudeThreshold = -0.5;
+    constexpr float angleThreshhold = 45;
+
+    static long lastUpdate = millis();
+    static float lastAltitude = imu.altitude;
+
+    // ways to open the parachute
+
+    if (millis() - lastUpdate > interval)
+    {
+      if (imu.altitude - lastAltitude < altitudeThreshold)
+      {
+        state = State::falling;
+      }
+      lastAltitude = imu.altitude;
+    }
+
+    if (imu.pitch > angleThreshhold || imu.pitch < -angleThreshhold)
+    {
+      state = State::falling;
+    }
+
+    if (imu.roll > angleThreshhold || imu.roll < -angleThreshhold)
+    {
+      state = State::falling;
+    }
+
+    lastUpdate = millis();
+
+    break;
+  case State::falling:
+
+    break;
+  case State::landed:
+    disk.rewriteToSD();
+    break;
+  }
+
+  if (state != State::landed || state != State::calibration)
+  {
+    imu.update();
+    // disk.saveToFlash(imu.readings());
+  }
 }

@@ -7,7 +7,7 @@ https://pdf1.alldatasheet.com/datasheet-pdf/download/880694/STMICROELECTRONICS/L
 */
 
 #include <LSM6.h>
-#include "Vec3.hpp"
+#include "vec.hpp"
 
 constexpr size_t CALIBRATION_SAMPLES = 500;
 
