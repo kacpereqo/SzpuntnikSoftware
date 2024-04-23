@@ -2,6 +2,7 @@
 #include <Wire.h>
 #include "imu.hpp"
 #include "disk.hpp"
+#include "rc.hpp"
 
 void setup()
 {
@@ -23,6 +24,7 @@ void loop()
 {
   static Imu imu;
   static Disk disk;
+  static RadioCommunication rc;
 
   static State state = State::calibration;
 
