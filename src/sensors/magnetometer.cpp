@@ -15,7 +15,7 @@ Magnetometer::Magnetometer()
     Serial.println("Magnetometer initialized");
 }
 
-Vec3 Magnetometer::readMag()
+Vec3<int16_t> Magnetometer::readMag()
 {
     mag.read();
 

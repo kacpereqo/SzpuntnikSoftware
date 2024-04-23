@@ -31,7 +31,7 @@ void Imu::calculateRollAndPitch()
 void Imu::calculateYaw()
 {
 
-    constexpr float GYRO_SENSITIVITY = 0.8;
+    constexpr float GYRO_SENSITIVITY = 0.08;
     constexpr float MAG_SENSIVITY = 0.92;
 
     // assert(MAG_SENSIVITY + GYRO_SENSITIVITY == 1);
@@ -48,10 +48,9 @@ void Imu::calculateYaw()
     constexpr float declinationAngle = 0.593; // in radians
 
     // normalize magnetometer values to [-1, 1]
-    Vec3 normalized_mag = {
-        (mag.x - min_x) / (max_x - min_x) * 2 - 1,
-        (mag.y - min_y) / (max_y - min_y) * 2 - 1,
-        (mag.z - min_z) / (max_z - min_z) * 2 - 1,
+    Vec3<float> normalized_mag = {
+        (float)(mag.x * -min_x) / (max_x - min_x) * 2 - 1,
+        (float)(mag.y * -min_y) / (max_y - min_y) * 2 - 1,
     };
 
     const float heading = atan2(normalized_mag.y, normalized_mag.x) + declinationAngle;

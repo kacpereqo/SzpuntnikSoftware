@@ -14,15 +14,8 @@ struct Magnetometer
         gauss16,
     };
 
-    struct Data
-    {
-        float x;
-        float y;
-        float z;
-    };
-
     Magnetometer();
-    Vec3 readMag();
+    Vec3<int16_t> readMag();
 
 private:
     LIS3MDL mag;

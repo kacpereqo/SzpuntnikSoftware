@@ -12,18 +12,17 @@ LSM6DS33::LSM6DS33()
     Serial.println("IMU initialized");
 
     calibrateGyro();
-    calibrateAccel();
 }
 
 void LSM6DS33::calibrateGyro()
 {
     Serial.println("Calibrating Gyro...");
 
-    Vec3 data = {0, 0, 0};
+    Vec3<float> data = {0, 0, 0};
 
     for (size_t i = 0; i < CALIBRATION_SAMPLES; i++)
     {
-        Vec3 gyro = this->readGyro();
+        Vec3<float> gyro = this->readGyro();
 
         data.x += gyro.x;
         data.y += gyro.y;
@@ -43,11 +42,11 @@ void LSM6DS33::calibrateAccel()
 {
     Serial.println("Calibrating Accel...");
 
-    Vec3 data = {0, 0, 0};
+    Vec3<float> data = {0, 0, 0};
 
     for (size_t i = 0; i < CALIBRATION_SAMPLES; i++)
     {
-        Vec3 accel = this->readAccel();
+        Vec3<float> accel = this->readAccel();
 
         data.x += accel.x;
         data.y += accel.y;
@@ -98,7 +97,7 @@ void LSM6DS33::configureAccel(AccelScale scale, AccelRate rate)
     imu.writeReg(LSM6::CTRL1_XL, CTRL1_XL_VALUE);
 }
 
-Vec3 LSM6DS33::readAccel()
+Vec3<float> LSM6DS33::readAccel()
 {
     imu.readAcc();
 
@@ -122,21 +121,21 @@ Vec3 LSM6DS33::readAccel()
     const float divide_factor = (1 << (14 - scale));
 
     return {
-        (imu.a.x - accelOffset.x) / divide_factor,
-        (imu.a.y - accelOffset.y) / divide_factor,
-        (imu.a.z - accelOffset.z) / divide_factor,
+        imu.a.x / divide_factor - accelOffset.x,
+        imu.a.y / divide_factor - accelOffset.y,
+        imu.a.z / divide_factor - accelOffset.z,
     };
 }
 
-Vec3 LSM6DS33::readGyro()
+Vec3<float> LSM6DS33::readGyro()
 {
     imu.readGyro();
 
     constexpr float divide_factor = 245;
 
     return {
-        (imu.g.x - gyroOffset.x) / divide_factor,
-        (imu.g.y - gyroOffset.y) / divide_factor,
-        (imu.g.z - gyroOffset.z) / divide_factor,
+        imu.g.x / divide_factor - gyroOffset.x,
+        imu.g.y / divide_factor - gyroOffset.y,
+        imu.g.z / divide_factor - gyroOffset.z,
     };
 }

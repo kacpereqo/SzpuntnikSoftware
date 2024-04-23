@@ -22,9 +22,9 @@ private:
     Magnetometer magnetometer; // Magnetometer
 
     // sensor readings
-    Vec3 accel{};
-    Vec3 gyro{};
-    Vec3 mag{};
+    Vec3<float> accel{};
+    Vec3<float> gyro{};
+    Vec3<int16_t> mag{};
 
     void calculateRollAndPitch();
     void calculateYaw();
