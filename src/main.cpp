@@ -33,18 +33,20 @@ void loop()
   constexpr int interval = 200; // in milliseconds
 
   constexpr float altitudeThreshold = -0.5;    // in meters
-  constexpr float angleThreshhold = 45;        // in degrees
   constexpr float accelerationThreshold = 0.1; // in g force
+  constexpr float angleThreshhold = 45;        // in degrees
 
   static long lastUpdate = millis();
 
   switch (state)
   {
   case State::calibration:
+  {
     imu.calibrate();
     state = State::waitingForTakeoff;
-
+  }
   case State::waitingForTakeoff:
+  {
 
     static float lastAcceleration = imu.accel.x;
 
@@ -58,7 +60,9 @@ void loop()
     }
 
     break;
+  }
   case State::flight:
+  {
 
     static float lastAltitude = imu.altitude;
 
@@ -89,12 +93,17 @@ void loop()
     lastUpdate = millis();
 
     break;
+  }
   case State::falling:
+  {
 
     break;
+  }
   case State::landed:
+  {
     disk.rewriteToSD();
     break;
+  }
   }
 
   if (state != State::landed || state != State::calibration)
