@@ -49,8 +49,8 @@ void Imu::calculateYaw()
 
     // normalize magnetometer values to [-1, 1]
     Vec3<float> normalized_mag = {
-        (float)(mag.x * -min_x) / (max_x - min_x) * 2 - 1,
-        (float)(mag.y * -min_y) / (max_y - min_y) * 2 - 1,
+        (float)(mag.x * sin(pitch * DEG_TO_RAD) - min_x) / (max_x - min_x) * 2 - 1,
+        (float)(mag.y * sin(roll * DEG_TO_RAD) - min_y) / (max_y - min_y) * 2 - 1,
     };
 
     const float heading = atan2(normalized_mag.y, normalized_mag.x) + declinationAngle;
