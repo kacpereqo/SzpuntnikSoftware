@@ -10,6 +10,14 @@ void setup()
     ;
 }
 
+enum class State
+{
+  calibration,
+  flight,
+  falling,
+  landed,
+};
+
 void loop()
 {
   static Imu imu;
@@ -23,5 +31,7 @@ void loop()
   Serial.print(" Roll: ");
   Serial.print(imu.roll);
   Serial.print(" Preassure: ");
-  Serial.println(imu.preassure);
+  Serial.print(imu.preassure);
+  Serial.print(" Alltitude: ");
+  Serial.println(imu.altitude);
 }

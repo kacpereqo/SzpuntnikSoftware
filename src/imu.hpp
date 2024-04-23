@@ -10,8 +10,8 @@ struct Imu
     float pitch = 0;
     float yaw = 0;
     float roll = 0;
-    float alltitude = 0;
     float preassure = 0;
+    float altitude = 0;
 
     void update();
     Imu();
@@ -22,11 +22,9 @@ private:
     Magnetometer magnetometer; // Magnetometer
 
     // sensor readings
-    Vec3 accel;
-    Vec3 gyro;
-    Vec3 mag;
-    float altitude;
-    float temperature; // unused
+    Vec3 accel{};
+    Vec3 gyro{};
+    Vec3 mag{};
 
     void calculateRollAndPitch();
     void calculateYaw();

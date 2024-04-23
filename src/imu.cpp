@@ -62,17 +62,17 @@ void Imu::calculateYaw()
 
 void Imu::calculateAlltitude()
 {
-    this->alltitude = this->barometer.readAlltitude(this->preassure);
+    this->altitude = this->barometer.readAlltitude(this->preassure);
 }
 
 void Imu::update()
 {
+    this->mag = this->magnetometer.readMag();
+    this->accel = this->imu.readAccel();
+    this->gyro = this->imu.readGyro();
+    this->preassure = this->barometer.readPressure();
 
-    mag = this->magnetometer.readMag();
-    accel = this->imu.readAccel();
-    gyro = this->imu.readGyro();
-    // preassure = this->barometer.readPressure();
-
-    calculateRollAndPitch();
     calculateYaw();
+    calculateAlltitude();
+    calculateRollAndPitch();
 }

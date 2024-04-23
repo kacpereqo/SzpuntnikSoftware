@@ -29,7 +29,7 @@ void LSM6DS33::calibrateGyro()
         data.y += gyro.y;
         data.z += gyro.z;
 
-        delay(1);
+        // delay(1);
     }
 
     Serial.println("Calibration done");
@@ -53,7 +53,7 @@ void LSM6DS33::calibrateAccel()
         data.y += accel.y;
         data.z += accel.z;
 
-        delay(1);
+        // delay(1);
     }
 
     Serial.println("Calibration done");
@@ -122,9 +122,9 @@ Vec3 LSM6DS33::readAccel()
     const float divide_factor = (1 << (14 - scale));
 
     return {
-        imu.a.x / divide_factor,
-        imu.a.y / divide_factor,
-        imu.a.z / divide_factor,
+        (imu.a.x - accelOffset.x) / divide_factor,
+        (imu.a.y - accelOffset.y) / divide_factor,
+        (imu.a.z - accelOffset.z) / divide_factor,
     };
 }
 

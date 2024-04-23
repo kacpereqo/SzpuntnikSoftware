@@ -17,16 +17,19 @@ struct LPS25H
         Hz12_5,
         Hz25,
     };
-
     LPS25H();
-    void configurePressure();
+
+    void calibrateBarometer();
     void configureTemperature();
+
     float readAlltitude(float pressure);
     float readPressure();
     float readTemperature();
 
 private:
-    LPS ps;
+    LPS barometer;
+
+    float startPreassure = 1013.25; // Standard pressure at sea level
 };
 
 #endif // LPS25H_HPP
