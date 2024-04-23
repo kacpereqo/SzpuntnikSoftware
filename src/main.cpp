@@ -3,6 +3,7 @@
 #include "imu.hpp"
 #include "disk.hpp"
 #include "rc.hpp"
+#include "recovery.hpp"
 
 void setup()
 {
@@ -25,6 +26,7 @@ void loop()
   static Imu imu;
   static Disk disk;
   static RadioCommunication rc;
+  static Recovery recovery;
 
   static State state = State::calibration;
 
@@ -67,6 +69,7 @@ void loop()
     {
       if (imu.altitude - lastAltitude < altitudeThreshold)
       {
+        recovery.deploy();
         state = State::falling;
       }
       lastAltitude = imu.altitude;
@@ -74,11 +77,13 @@ void loop()
 
     if (imu.pitch > angleThreshhold || imu.pitch < -angleThreshhold)
     {
+      recovery.deploy();
       state = State::falling;
     }
 
     if (imu.roll > angleThreshhold || imu.roll < -angleThreshhold)
     {
+      recovery.deploy();
       state = State::falling;
     }
 
