@@ -30,6 +30,14 @@ void loop()
 
   static State state = State::calibration;
 
+  constexpr int interval = 200; // in milliseconds
+
+  constexpr float altitudeThreshold = -0.5;    // in meters
+  constexpr float angleThreshhold = 45;        // in degrees
+  constexpr float accelerationThreshold = 0.1; // in g force
+
+  static long lastUpdate = millis();
+
   switch (state)
   {
   case State::calibration:
@@ -38,10 +46,6 @@ void loop()
 
   case State::waitingForTakeoff:
 
-    constexpr int interval = 200;                // in milliseconds
-    constexpr float accelerationThreshold = 0.1; // in g force
-
-    static long lastUpdate = millis();
     static float lastAcceleration = imu.accel.x;
 
     if (millis() - lastUpdate > interval)
@@ -56,11 +60,6 @@ void loop()
     break;
   case State::flight:
 
-    constexpr int interval = 200; // in milliseconds
-    constexpr float altitudeThreshold = -0.5;
-    constexpr float angleThreshhold = 45;
-
-    static long lastUpdate = millis();
     static float lastAltitude = imu.altitude;
 
     // ways to open the parachute

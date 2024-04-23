@@ -1,5 +1,5 @@
 #include "Imu.hpp"
-#include "macros.hpp"
+
 #include <Arduino.h>
 
 Imu::Imu()
