@@ -26,6 +26,7 @@ private:
     Magnetometer magnetometer; // Magnetometer
 
     // sensor readings
+    float filtered_pitch = 0;
     Vec3<float> gyro{};
     Vec3<int16_t> mag{};
 

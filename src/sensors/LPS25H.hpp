@@ -19,7 +19,8 @@ struct LPS25H
     };
     LPS25H();
 
-    void calibrateBarometer();
+        void calibrateBarometer();
+    void configureBarometer();
     void configureTemperature();
 
     float readAlltitude(float pressure);

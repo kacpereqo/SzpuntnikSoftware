@@ -1,6 +1,7 @@
 #include "Imu.hpp"
 
 #include <Arduino.h>
+#include "filters/lowpass.h"
 
 Imu::Imu()
 {
@@ -36,8 +37,8 @@ void Imu::calculateRollAndPitch()
 void Imu::calculateYaw()
 {
 
-    constexpr float GYRO_SENSITIVITY = 0.08;
-    constexpr float MAG_SENSIVITY = 0.92;
+    constexpr float GYRO_SENSITIVITY = 0.00;
+    constexpr float MAG_SENSIVITY = 1.00;
 
     // assert(MAG_SENSIVITY + GYRO_SENSITIVITY == 1);
 
@@ -83,12 +84,19 @@ void Imu::update()
 
 void Imu::readings()
 {
-    Serial.print("Pitch: ");
+    // Serial.print("Pitch: ");
     Serial.print(this->pitch);
-    Serial.print(" Roll: ");
-    Serial.print(this->roll);
-    Serial.print(" Yaw: ");
-    Serial.print(this->yaw);
-    Serial.print(" Altitude: ");
-    Serial.println(this->altitude);
+    Serial.print(",");
+    this->filtered_pitch = lowPassFilter(this->pitch, this->filtered_pitch, 0.05);
+    Serial.print(this->filtered_pitch);
+    Serial.println();
+    // Serial.print(" Roll: ");
+    // Serial.print(this->roll);
+    // Serial.print(",");
+    // Serial.print(" Yaw: ");
+    // Serial.print(this->yaw);
+    // Serial.print(",");
+    // Serial.print(" Preassure: ");
+    // Serial.println(this->preassure);
+    delay(1000 / 30);
 }

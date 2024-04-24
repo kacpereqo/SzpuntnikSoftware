@@ -7,11 +7,12 @@
 
 void setup()
 {
-  Serial.begin(115200);
+  Serial.begin(9600);
   Wire.begin();
   while (!Serial)
     ;
 }
+
 enum class State
 {
   calibration,
@@ -109,6 +110,7 @@ void loop()
   if (state != State::landed || state != State::calibration)
   {
     imu.update();
+    imu.readings();
     // disk.saveToFlash(imu.readings());
   }
 }
