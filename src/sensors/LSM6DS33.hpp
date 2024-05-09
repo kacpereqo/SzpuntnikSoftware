@@ -58,7 +58,6 @@ struct LSM6DS33
         Hz3330,
         Hz6660,
     };
-
     Vec3<float> gyroOffset;
     Vec3<float> accelOffset;
 
@@ -71,7 +70,10 @@ struct LSM6DS33
     void calibrateAccel();
 
     Vec3<float> readAccel();
+    Vec3<int16_t> readRawAccel();
+
     Vec3<float> readGyro();
+    Vec3<int16_t> readRawGyro();
 
 private:
     LSM6 imu;

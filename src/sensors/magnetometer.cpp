@@ -20,8 +20,8 @@ Vec3<int16_t> Magnetometer::readMag()
     mag.read();
 
     return {
-        mag.m.x,
         mag.m.y,
         mag.m.z,
+        mag.m.x,
     };
 }

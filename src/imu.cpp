@@ -17,8 +17,8 @@ void Imu::calibrate()
 void Imu::calculateRollAndPitch()
 {
 
-    constexpr float GYRO_SENSITIVITY = 0.88;
-    constexpr float ACCEL_SENSITIVITY = 0.12;
+    constexpr float GYRO_SENSITIVITY = 0.98;
+    constexpr float ACCEL_SENSITIVITY = 0.02;
 
     // assert(ACCEL_SENSITIVITY + GYRO_SENSITIVITY == 1);
 
@@ -71,13 +71,7 @@ void Imu::calculateYaw()
         (float)(mag.z * sin(pitch * DEG_TO_RAD) - min_z) / (max_z - min_z) * 2 - 1,
         (float)(mag.z * sin(roll * DEG_TO_RAD) - min_z) / (max_z - min_z) * 2 - 1};
 
-    Serial.print("Normalized mag: ");
-    Serial.print(normalized_mag_z.x);
-    Serial.print(",");
-    Serial.print(normalized_mag_z.y);
-    Serial.print("|");
-
-    const float heading = atan2(normalized_mag.y * normalized_mag_z.y, normalized_mag.x * normalized_mag_z.x) + declinationAngle;
+    const float heading = atan2(normalized_mag.y, normalized_mag.x) + declinationAngle;
     const float headingDegrees = heading * RAD_TO_DEG;
 
     this->yaw = headingDegrees * MAG_SENSIVITY + gyro.z * GYRO_SENSITIVITY;
@@ -102,17 +96,22 @@ void Imu::update()
 
 void Imu::readings()
 {
-    // Serial.print("Pitch: ");
+
     Serial.print(this->pitch);
     Serial.print(",");
-    // Serial.print(" Roll: ");
-    Serial.print(this->roll);
+    // Serial.print(this->yaw);
+    Serial.print(0);
     Serial.print(",");
-    // Serial.print(" Yaw: ");
-    Serial.print(this->yaw);
+    Serial.print(this->roll);
     Serial.println();
+    // Serial.print(this->accel.x);
+    // Serial.print(",");
+    // Serial.print(this->accel.y);
+    // Serial.print(",");
+    // Serial.print(this->accel.z);
+    // Serial.print(",");
     // Serial.print(",");
     // Serial.print(" Preassure: ");
     // Serial.println(this->preassure);
-    delay(1000 / 100);
+    // delay(1000);
 }

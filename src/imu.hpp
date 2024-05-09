@@ -15,16 +15,17 @@ struct Imu
 
     Vec3<float> accel{};
 
+    // TODO: implement
+
     void calibrate();
     void update();
     void readings();
     Imu();
 
-private:
     LSM6DS33 imu;              // Accelerometer and Gyroscope
-    LPS25H barometer;          // Barometer
     Magnetometer magnetometer; // Magnetometer
-
+    LPS25H barometer;          // Barometer
+private:
     // sensor readings
     float filtered_pitch = 0;
     Vec3<float> gyro{};

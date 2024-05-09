@@ -36,8 +36,8 @@ ws.onopen = () => {
 ws.onmessage = (event) => {
   const data = event.data.split(',').map(Number)
   x.value = (data[0] * Math.PI) / 180
-  y.value = (data[1] * Math.PI) / 180
-  z.value = (data[2] * Math.PI) / 180
+  z.value = (data[1] * Math.PI) / 180
+  y.value = (data[2] * Math.PI) / 180
 }
 </script>
 

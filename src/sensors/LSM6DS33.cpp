@@ -93,6 +93,7 @@ void LSM6DS33::configureAccel(AccelScale scale, AccelRate rate)
 
     CTRL1_XL_VALUE |= (uint8_t)scale << 2;
     CTRL1_XL_VALUE |= (uint8_t)rate << 4;
+    CTRL1_XL_VALUE |= (uint8_t)0;
 
     imu.writeReg(LSM6::CTRL1_XL, CTRL1_XL_VALUE);
 }
@@ -121,9 +122,9 @@ Vec3<float> LSM6DS33::readAccel()
     const float divide_factor = (1 << (14 - scale));
 
     return {
-        imu.a.x / divide_factor - accelOffset.x,
         imu.a.y / divide_factor - accelOffset.y,
         imu.a.z / divide_factor - accelOffset.z,
+        imu.a.x / divide_factor - accelOffset.x,
     };
 }
 
@@ -134,8 +135,30 @@ Vec3<float> LSM6DS33::readGyro()
     constexpr float divide_factor = 245;
 
     return {
-        imu.g.x / divide_factor - gyroOffset.x,
         imu.g.y / divide_factor - gyroOffset.y,
         imu.g.z / divide_factor - gyroOffset.z,
+        imu.g.x / divide_factor - gyroOffset.x,
+    };
+}
+
+Vec3<int16_t> LSM6DS33::readRawAccel()
+{
+    imu.readAcc();
+
+    return {
+        imu.a.y,
+        imu.a.z,
+        imu.a.x,
+    };
+}
+
+Vec3<int16_t> LSM6DS33::readRawGyro()
+{
+    imu.readGyro();
+
+    return {
+        imu.g.y,
+        imu.g.z,
+        imu.g.x,
     };
 }

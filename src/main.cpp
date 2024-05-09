@@ -102,7 +102,7 @@ void loop()
   }
   case State::landed:
   {
-    disk.rewriteToSD();
+    // disk.save();
     break;
   }
   }
@@ -111,6 +111,13 @@ void loop()
   {
     imu.update();
     imu.readings();
+    disk.save({
+        millis(),
+        imu.imu.readRawAccel(),
+        imu.imu.readRawGyro(),
+        imu.magnetometer.readMag(),
+    });
+
     // disk.saveToFlash(imu.readings());
   }
 }

@@ -37,6 +37,7 @@ async def websocket_endpoint(websocket: WebSocket):
     while True:
         try:
             data = ser.readline().decode("utf-8").strip()
+            print (f"sent | {data}")
             await websocket.send_text(data)
         except WebSocketDisconnect:
             ser.close()
