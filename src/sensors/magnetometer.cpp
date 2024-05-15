@@ -11,6 +11,7 @@ Magnetometer::Magnetometer()
         while (1)
             ;
     }
+
     mag.enableDefault();
     Serial.println("Magnetometer initialized");
 }
@@ -19,9 +20,11 @@ Vec3<int16_t> Magnetometer::readMag()
 {
     mag.read();
 
+
+
     return {
         mag.m.y,
-        mag.m.z,
         mag.m.x,
+        mag.m.z,
     };
 }

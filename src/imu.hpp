@@ -14,8 +14,12 @@ struct Imu
     float altitude = 0;
 
     Vec3<float> accel{};
+    Vec3<float> velocity{};
 
     // TODO: implement
+
+    Vec3<float> accelAvg[25];
+    uint16_t counter = 0;
 
     void calibrate();
     void update();
@@ -30,6 +34,9 @@ private:
     float filtered_pitch = 0;
     Vec3<float> gyro{};
     Vec3<int16_t> mag{};
+
+    void appendAccel();
+    Vec3<float> getAccel();
 
     void calculateRollAndPitch();
     void calculateYaw();

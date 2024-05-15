@@ -123,8 +123,8 @@ Vec3<float> LSM6DS33::readAccel()
 
     return {
         imu.a.y / divide_factor - accelOffset.y,
+        -imu.a.x / divide_factor - accelOffset.x,
         imu.a.z / divide_factor - accelOffset.z,
-        imu.a.x / divide_factor - accelOffset.x,
     };
 }
 
@@ -136,8 +136,8 @@ Vec3<float> LSM6DS33::readGyro()
 
     return {
         imu.g.y / divide_factor - gyroOffset.y,
+        -imu.g.x / divide_factor - gyroOffset.x,
         imu.g.z / divide_factor - gyroOffset.z,
-        imu.g.x / divide_factor - gyroOffset.x,
     };
 }
 
@@ -147,8 +147,8 @@ Vec3<int16_t> LSM6DS33::readRawAccel()
 
     return {
         imu.a.y,
-        imu.a.z,
         imu.a.x,
+        imu.a.z,
     };
 }
 
@@ -158,7 +158,7 @@ Vec3<int16_t> LSM6DS33::readRawGyro()
 
     return {
         imu.g.y,
-        imu.g.z,
         imu.g.x,
+        imu.g.z,
     };
 }
