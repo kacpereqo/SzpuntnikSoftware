@@ -1,4 +1,4 @@
-#include "Imu.hpp"
+#include "imu.hpp"
 
 #include <Arduino.h>
 #include "filters/lowpass.h"

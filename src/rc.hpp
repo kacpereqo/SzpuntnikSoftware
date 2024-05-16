@@ -1,12 +1,18 @@
-#ifndef RC_HPP
-#define RC_HPP
+// #ifndef RC_HPP
+// #define RC_HPP
 
-struct RadioCommunication
-{
-    RadioCommunication();
+// #include <RadioLib.h>
 
-    void send(const char *message);
-    void receive(char *message);
-};
+// struct RC
+// {
+//     RC();
 
-#endif // RC_HPP
+//     void update();
+
+//     bool switch1;
+//     bool switch2;
+//     bool switch3;
+//     bool switch4;
+// };
+
+// #endif // RC_HPP
