@@ -4,6 +4,13 @@
 #include <SD.h>
 #include "vec.hpp"
 
+enum class ActivationMethod
+{
+    manual,
+    rotation,
+    timer,
+};
+
 struct Disk
 {
 public:
@@ -17,9 +24,8 @@ public:
         Vec3<int16_t> gyro;
         Vec3<int16_t> mag;
 
-        // uint16_t pressureInner;
-        // uint16_t pressureOuter;
-        // uint16_t temperature;
+        float pressure;
+        float temperature;
     };
 
     // data bytes layout:
@@ -37,6 +43,7 @@ public:
     // 25 - 26 : pressure - outer
     // 27 - 28 : temperature
 
+    void save(ActivationMethod method);
     void save(Disk::WriteData data);
 
 private:

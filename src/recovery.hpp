@@ -10,6 +10,9 @@ struct Recovery
 {
     Recovery();
 
+    bool isDeployed = false;
+
+    void open();
     void deploy();
 
 private:

@@ -97,32 +97,41 @@ void Imu::readings()
 {
 
     // ROTATION
-    Serial.print("Pitch: ");
-    Serial.print(this->pitch);
-    Serial.print(",");
+    // acc
+    // Serial.print("Accel: ");
+    // Serial.print(accel.x);
+    // Serial.print(" ");
+    // Serial.print(accel.y);
+    // Serial.print(" ");
+    // Serial.print(accel.z);
+    // Serial.print(" ");
 
-    Serial.print(" Roll: ");
-    Serial.print(this->roll);
-    Serial.print(",");
+    // gyro
+    // Serial.print("Gyro: ");
+    // Serial.print(gyro.x);
+    // Serial.print(" ");
+    // Serial.print(gyro.y);
+    // Serial.print(" ");
+    // Serial.print(gyro.z);
+    // Serial.print(" ");
 
-    Serial.print(" Yaw: ");
-    Serial.print(this->yaw);
-    // Serial.print(",");
-    // Serial.print(180);
-    // Serial.print(",");
-    // Serial.print(-180);
+    // mag
+    // Serial.print("Mag: ");
+    // Serial.print(mag.x);
+    // Serial.print(" ");
+    // Serial.print(mag.y);
+    // Serial.print(" ");
+    // Serial.print(mag.z);
 
-    // Serial.print(" | ");
-    // ACCELERATION
-    // Serial.print(" Accel x: ");
-    // Serial.print(this->accel.x);
-    // Serial.print(" Accel y: ");
-    // Serial.print(this->accel.y);
-    // Serial.print(" Accel z: ");
-    // Serial.print(this->accel.z);
+    // temperature
+    // Serial.print("Temp: ");
+    // Serial.print(this->barometer.readTemperature());
+    // barometer
+    // Serial.print("Pressure: ");
+    // Serial.print(preassure);
 
     // end of line
-    Serial.println();
+    // Serial.println();
 }
 
 void Imu::appendAccel()

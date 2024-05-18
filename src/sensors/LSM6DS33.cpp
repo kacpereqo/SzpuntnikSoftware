@@ -4,19 +4,19 @@ LSM6DS33::LSM6DS33()
 {
     if (!imu.init())
     {
-        Serial.println("Failed to detect and initialize IMU!");
+        // Serial.println("Failed to detect and initialize IMU!");
         while (1)
             ;
     }
     imu.enableDefault();
-    Serial.println("IMU initialized");
+    // Serial.println("IMU initialized");
 
     calibrateGyro();
 }
 
 void LSM6DS33::calibrateGyro()
 {
-    Serial.println("Calibrating Gyro...");
+    // Serial.println("Calibrating Gyro...");
 
     Vec3<float> data = {0, 0, 0};
 
@@ -31,7 +31,7 @@ void LSM6DS33::calibrateGyro()
         // delay(1);
     }
 
-    Serial.println("Calibration done");
+    // Serial.println("Calibration done");
 
     gyroOffset.x = data.x / CALIBRATION_SAMPLES;
     gyroOffset.y = data.y / CALIBRATION_SAMPLES;
@@ -40,7 +40,7 @@ void LSM6DS33::calibrateGyro()
 
 void LSM6DS33::calibrateAccel()
 {
-    Serial.println("Calibrating Accel...");
+    // Serial.println("Calibrating Accel...");
 
     Vec3<float> data = {0, 0, 0};
 
@@ -55,7 +55,7 @@ void LSM6DS33::calibrateAccel()
         // delay(1);
     }
 
-    Serial.println("Calibration done");
+    // Serial.println("Calibration done");
 
     accelOffset.x = data.x / CALIBRATION_SAMPLES;
     accelOffset.y = data.y / CALIBRATION_SAMPLES;

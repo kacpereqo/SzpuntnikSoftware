@@ -9,23 +9,23 @@
 // void setFlag()
 // {
 
-//     Serial.println("sex!");
+//     // Serial.println("sex!");
 //     receivedFlag = true;
 // }
 
 // RC::RC()
 // {
 
-//     Serial.print(F("[nRF24] Initializing ... "));
+//     // Serial.print(F("[nRF24] Initializing ... "));
 //     int state = foooooo.begin();
 //     if (state == RADIOLIB_ERR_NONE)
 //     {
-//         Serial.println(F("success!"));
+//         // Serial.println(F("success!"));
 //     }
 //     else
 //     {
-//         Serial.print(F("failed, code "));
-//         Serial.println(state);
+//         // Serial.print(F("failed, code "));
+//         // Serial.println(state);
 //         while (true)
 //             ;
 //     }
@@ -34,17 +34,17 @@
 //     // NOTE: address width in bytes MUST be equal to the
 //     //       width set in begin() or setAddressWidth()
 //     //       methods (5 by default)
-//     Serial.print(F("[nRF24] Setting address for receive pipe 0 ... "));
+//     // Serial.print(F("[nRF24] Setting address for receive pipe 0 ... "));
 //     byte addr[] = {0x01, 0x23, 0x45, 0x67, 0x89};
 //     state = foooooo.setReceivePipe(0, addr);
 //     if (state == RADIOLIB_ERR_NONE)
 //     {
-//         Serial.println(F("success!"));
+//         // Serial.println(F("success!"));
 //     }
 //     else
 //     {
-//         Serial.print(F("failed, code "));
-//         Serial.println(state);
+//         // Serial.print(F("failed, code "));
+//         // Serial.println(state);
 //         while (true)
 //             ;
 //     }
@@ -54,16 +54,16 @@
 //     foooooo.setPacketReceivedAction(setFlag);
 
 //     // start listening
-//     Serial.print(F("[nRF24] Starting to listen ... "));
+//     // Serial.print(F("[nRF24] Starting to listen ... "));
 //     state = foooooo.startReceive();
 //     if (state == RADIOLIB_ERR_NONE)
 //     {
-//         Serial.println(F("success!"));
+//         // Serial.println(F("success!"));
 //     }
 //     else
 //     {
-//         Serial.print(F("failed, code "));
-//         Serial.println(state);
+//         // Serial.print(F("failed, code "));
+//         // Serial.println(state);
 //         while (true)
 //             ;
 //     }
@@ -81,10 +81,10 @@
 
 //     //     if (state == RADIOLIB_ERR_NONE)
 //     //     {
-//     //         Serial.println(F("[nRF24] Received packet!"));
+//     //         // Serial.println(F("[nRF24] Received packet!"));
 
-//     //         Serial.print(F("[nRF24] Data:\t\t"));
-//     //         Serial.println(str);
+//     //         // Serial.print(F("[nRF24] Data:\t\t"));
+//     //         // Serial.println(str);
 
 //     //         switch1 = str[0] == '1';
 //     //         switch2 = str[1] == '1';
@@ -93,8 +93,8 @@
 //     //     }
 //     //     else
 //     //     {
-//     //         Serial.print(F("[nRF24] Failed, code "));
-//     //         Serial.println(state);
+//     //         // Serial.print(F("[nRF24] Failed, code "));
+//     //         // Serial.println(state);
 //     //     }
 
 //     //     radio.startReceive();
@@ -111,21 +111,21 @@
 //         if (state == RADIOLIB_ERR_NONE)
 //         {
 //             // packet was successfully received
-//             Serial.println(F("[nRF24] Received packet!"));
+//             // Serial.println(F("[nRF24] Received packet!"));
 
 //             // print data of the packet
-//             Serial.print(F("[nRF24] Data:\t\t"));
-//             Serial.println(str);
+//             // Serial.print(F("[nRF24] Data:\t\t"));
+//             // Serial.println(str);
 //         }
 //         else
 //         {
 //             // some other error occurred
-//             Serial.print(F("[nRF24] Failed, code "));
-//             Serial.println(state);
+//             // Serial.print(F("[nRF24] Failed, code "));
+//             // Serial.println(state);
 //         }
 
 //         // put module back to listen mode
-//         Serial.print(F("[nRF24] Starting to listen ... "));
+//         // Serial.print(F("[nRF24] Starting to listen ... "));
 //         foooooo.startReceive();
 //     }
 // }

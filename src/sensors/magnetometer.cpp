@@ -4,23 +4,21 @@
 
 Magnetometer::Magnetometer()
 {
-    Serial.println("Initializing magnetometer...");
+    // Serial.println("Initializing magnetometer...");
     if (!mag.init())
     {
-        Serial.println("Failed to detect and initialize magnetometer!");
+        // Serial.println("Failed to detect and initialize magnetometer!");
         while (1)
             ;
     }
 
     mag.enableDefault();
-    Serial.println("Magnetometer initialized");
+    // Serial.println("Magnetometer initialized");
 }
 
 Vec3<int16_t> Magnetometer::readMag()
 {
     mag.read();
-
-
 
     return {
         mag.m.y,

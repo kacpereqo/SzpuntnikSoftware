@@ -4,16 +4,22 @@
 
 Recovery::Recovery()
 {
-    this->servo.write(90);
-
+    this->servo.write(0);
     this->servo.attach(SERVO_PIN);
-    Serial.println("Recovery initialized");
+    // Serial.println("Recovery initialized");
 }
 void Recovery::deploy()
 {
-    servo.write(0);
-    delay(200);
-    servo.write(90);
-    delay(200);
-    // this->servo.write(SERVO_ROTATION_ANGLE);
+    if (this->servo.read() == 0)
+    {
+        this->servo.write(180);
+    }
+}
+
+void Recovery::open()
+{
+    if (this->servo.read() == 180)
+    {
+        this->servo.write(0);
+    }
 }

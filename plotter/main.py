@@ -1,7 +1,7 @@
 import configparser
 
-import serial
-import serial.tools.list_ports
+import // Serial
+import // Serial.tools.list_ports
 import uvicorn
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 
@@ -18,7 +18,7 @@ async def websocket_endpoint(websocket: WebSocket):
     env_name = config.sections()[0].split(":")[1].replace("_", " ")
     port = None
 
-    ports = list(serial.tools.list_ports.comports())
+    ports = list(// Serial.tools.list_ports.comports())
     for p in ports:
         print(p)
         if p.product is None:
@@ -31,8 +31,8 @@ async def websocket_endpoint(websocket: WebSocket):
     else:
         print(f"Found device at {port}")
 
-    ser = serial.Serial(port, 115200)
-    print("Connected to serial port")
+    ser = // Serial.// Serial(port, 115200)
+    print("Connected to // Serial port")
     print(ser.readline().decode("utf-8").strip())
     while True:
         try:

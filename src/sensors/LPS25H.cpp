@@ -5,10 +5,10 @@ constexpr size_t CALIBRATION_SAMPLES = 500;
 
 LPS25H::LPS25H()
 {
-    Serial.println("Initializing pressure sensor...");
+    // Serial.println("Initializing pressure sensor...");
     if (!barometer.init())
     {
-        Serial.println("Failed to autodetect pressure sensor!");
+        // Serial.println("Failed to autodetect pressure sensor!");
         while (1)
             ;
     }
@@ -16,12 +16,12 @@ LPS25H::LPS25H()
     barometer.enableDefault();
     this->calibrateBarometer();
 
-    Serial.println("Pressure sensor initialized");
+    // Serial.println("Pressure sensor initialized");
 }
 
 void LPS25H::calibrateBarometer()
 {
-    Serial.println("Calibrating barometer...");
+    // Serial.println("Calibrating barometer...");
 
     for (size_t i = 0; i < CALIBRATION_SAMPLES; i++)
     {
@@ -30,7 +30,7 @@ void LPS25H::calibrateBarometer()
         // delay(1);
     }
 
-    Serial.println("Calibration done");
+    // Serial.println("Calibration done");
 
     this->startPreassure /= CALIBRATION_SAMPLES;
 }
