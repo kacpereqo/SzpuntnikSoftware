@@ -7,6 +7,7 @@ class Sensor {
 protected:
   uint8_t scale;
   uint8_t rate;
+  float scale_factor;
 
 public:
   virtual void configure() = 0;

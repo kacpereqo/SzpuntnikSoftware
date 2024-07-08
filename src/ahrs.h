@@ -15,11 +15,10 @@ struct Ahrs {
     TempAngles.x = atan2(acc.y, acc.z);
     TempAngles.y = atan2(-acc.x, sqrt(acc.y * acc.y + acc.z * acc.z));
 
-    TempAngles.z =
-        atan2(mag.z * sin(TempAngles.y) - mag.y * cos(TempAngles.y),
-              mag.x * cos(TempAngles.x) +
-                  mag.y * sin(TempAngles.x * M_PI) * sin(TempAngles.y * M_PI) +
-                  mag.z * sin(TempAngles.x * M_PI) * cos(TempAngles.y * M_PI));
+    TempAngles.z = atan2(mag.z * sin(TempAngles.y) - mag.y * cos(TempAngles.y),
+                         mag.x * cos(TempAngles.x) +
+                             mag.y * sin(TempAngles.x) * sin(TempAngles.y) +
+                             mag.z * sin(TempAngles.x) * cos(TempAngles.y));
 
     constexpr double gain = 0.98;
 

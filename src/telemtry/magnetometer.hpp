@@ -6,6 +6,8 @@
 
 class Magnetometer : public Sensor {
 private:
+  Vec3<int16_t> max_values_raw;
+  Vec3<int16_t> min_values_raw;
   LIS3MDL &sensor;
 
 public:
