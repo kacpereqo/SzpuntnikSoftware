@@ -1,0 +1,21 @@
+{
+    // run C:\Users\remza\.platformio\penv\Scripts\platformio.exe run -t compiledb every time a file is saved
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "compiledb",
+            "type": "shell",
+            "command": "C:\\Users\\remza\\.platformio\\penv\\Scripts\\platformio.exe",
+            "args": [
+                "run",
+                "-t",
+                "compiledb"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        }
+    ]
+}
