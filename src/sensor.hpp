@@ -4,6 +4,10 @@
 #include <cstdint>
 
 class Sensor {
+protected:
+  uint8_t scale;
+  uint8_t rate;
+
 public:
   virtual void configure() = 0;
   virtual void calibrate() = 0;

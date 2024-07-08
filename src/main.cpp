@@ -45,9 +45,6 @@ void loop() {
     break;
   }
 
-  if (state >= States::flying) {
-    disk.Save(accel.getData(), gyro.getData(), mag.getData(), ahrs.rotations);
-  }
-
+  disk.Save(accel.getData(), gyro.getData(), mag.getData(), ahrs.rotations);
   ahrs.update(accel.getData(), gyro.getData(), mag.getData());
 }
