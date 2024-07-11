@@ -6,6 +6,8 @@
 
 class Gyroscope : public Sensor {
 private:
+  Vec3<int16_t> raw;
+  Vec3<float> data;
   LSM6 &sensor;
 
 public:

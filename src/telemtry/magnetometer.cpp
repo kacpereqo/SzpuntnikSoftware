@@ -9,6 +9,8 @@ Magnetometer::Magnetometer(MagRate rate, MagScale scale)
 
   this->min_values_raw = {INT16_MAX, INT16_MAX, INT16_MAX};
   this->max_values_raw = {INT16_MIN, INT16_MIN, INT16_MIN};
+
+  this->sensor.enableDefault();
 }
 
 void Magnetometer::configure() {}
@@ -52,7 +54,7 @@ Vec3<float> &Magnetometer::getData() {
 Vec3<int16_t> &Magnetometer::getRawData() {
   this->sensor.read();
 
-  Vec3<int16_t> raw = {this->sensor.m.x, this->sensor.m.y, this->sensor.m.z};
+  this->raw = {this->sensor.m.x, this->sensor.m.y, this->sensor.m.z};
 
   return raw;
 }

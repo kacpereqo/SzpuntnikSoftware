@@ -1,6 +1,7 @@
 #pragma once
 
 #include "sensor.hpp"
+#include "vec.hpp"
 #include <LIS3MDL.h>
 #include <cstdint>
 
@@ -8,6 +9,9 @@ class Magnetometer : public Sensor {
 private:
   Vec3<int16_t> max_values_raw;
   Vec3<int16_t> min_values_raw;
+
+  Vec3<int16_t> raw;
+  Vec3<float> data;
   LIS3MDL &sensor;
 
 public:

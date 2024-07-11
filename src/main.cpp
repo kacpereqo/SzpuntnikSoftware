@@ -3,12 +3,17 @@
 #include "telemtry\accelerometer.hpp"
 #include "telemtry\gyroscope.hpp"
 #include "telemtry\magnetometer.hpp"
-#include "utils/debug.hpp"
 #include <LSM6.h>
 #include <Wire.h>
 #include <ahrs.h>
 
-void setup() {}
+void setup() {
+  Serial.begin(115200);
+  while (!Serial)
+    Serial.println("Waiting for Serial connection");
+
+  Wire.begin();
+}
 
 enum class States {
   idle,
@@ -46,41 +51,44 @@ void loop() {
     break;
   }
 
-  disk.Save(accel.getData(), gyro.getData(), mag.getData(), ahrs.rotations);
-  ahrs.update(accel.getData(), gyro.getData(), mag.getData());
+  // disk.Save(accel.getData(), gyro.getData(), mag.getData(), ahrs.rotations);
+  // ahrs.update(accel.getData(), gyro.getData(), mag.getData());
 
   // print everything
-  Serial.print("Accel: ");
-  Serial.print(accel.getData().x);
-  Serial.print(" ");
-  Serial.print(accel.getData().y);
-  Serial.print(" ");
-  Serial.print(accel.getData().z);
+  // Serial.print("Accel: ");
+  // Serial.print(accel.getData().x);
+  // Serial.print(" ");
+  // Serial.print(accel.getData().y);
+  // Serial.print(" ");
+  // Serial.print(accel.getData().z);
 
-  Serial.print("|");
+  // Serial.print("|");
 
-  Serial.print("Gyro: ");
-  Serial.print(gyro.getData().x);
-  Serial.print(" ");
-  Serial.print(gyro.getData().y);
-  Serial.print(" ");
-  Serial.print(gyro.getData().z);
+  // Serial.print("Gyro: ");
+  // Serial.print(gyro.getRawData().x);
+  // Serial.print(" ");
+  // Serial.print(gyro.getRawData().y);
+  // Serial.print(" ");
+  // Serial.print(gyro.getRawData().z);
 
   Serial.print("|");
 
   Serial.print("Mag: ");
-  Serial.print(mag.getData().x);
+  Serial.print(mag.getRawData().x);
   Serial.print(" ");
-  Serial.print(mag.getData().y);
+  Serial.print(mag.getRawData().y);
   Serial.print(" ");
-  Serial.print(mag.getData().z);
+  Serial.print(mag.getRawData().z);
 
   Serial.print("|");
 
-  Serial.print("Rotations: ");
-  Serial.print(ahrs.rotations.x);
-  Serial.print(" ");
-  Serial.print(ahrs.rotations.y);
-  Serial.print(" ");
-  Serial.print(ahrs.rotations.z);
+  // Serial.print("Rotations: ");
+  // Serial.print(ahrs.rotations.x);
+  // Serial.print(" ");
+  // Serial.print(ahrs.rotations.y);
+  // Serial.print(" ");
+  // Serial.print(ahrs.rotations.z);
+
+  Serial.println();
+  delay(1000.0 / 12.0);
 }
