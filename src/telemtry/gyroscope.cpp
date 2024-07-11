@@ -4,6 +4,7 @@
 Gyroscope::Gyroscope(GyroRate rate, GyroScale scale) : sensor(getLSM6()) {
   this->sensor = getLSM6();
   this->sensor.enableDefault();
+  this->scale_factor = 32768.0f / 245.0f;
 }
 
 void Gyroscope::configure() {}
@@ -11,9 +12,9 @@ void Gyroscope::configure() {}
 void Gyroscope::calibrate() {}
 
 Vec3<float> &Gyroscope::getData() {
-  Vec3<int16_t> raw = this->getRawData();
+  (void)this->getRawData();
 
-  Vec3<float> data = {
+  this->data = {
       raw.x / this->scale_factor,
       raw.y / this->scale_factor,
       raw.z / this->scale_factor,

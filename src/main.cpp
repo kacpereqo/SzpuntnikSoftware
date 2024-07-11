@@ -1,5 +1,6 @@
 
 #include "disk.hpp"
+#include "math.h"
 #include "telemtry\accelerometer.hpp"
 #include "telemtry\gyroscope.hpp"
 #include "telemtry\magnetometer.hpp"
@@ -52,9 +53,9 @@ void loop() {
   }
 
   // disk.Save(accel.getData(), gyro.getData(), mag.getData(), ahrs.rotations);
-  // ahrs.update(accel.getData(), gyro.getData(), mag.getData());
+  ahrs.update(accel.getData(), gyro.getData(), mag.getData());
 
-  // print everything
+  // // print everything
   // Serial.print("Accel: ");
   // Serial.print(accel.getData().x);
   // Serial.print(" ");
@@ -65,30 +66,30 @@ void loop() {
   // Serial.print("|");
 
   // Serial.print("Gyro: ");
-  // Serial.print(gyro.getRawData().x);
+  // Serial.print(gyro.getData().x);
   // Serial.print(" ");
-  // Serial.print(gyro.getRawData().y);
+  // Serial.print(gyro.getData().y);
   // Serial.print(" ");
-  // Serial.print(gyro.getRawData().z);
+  // Serial.print(gyro.getData().z);
 
-  Serial.print("|");
+  // Serial.print("|");
 
-  Serial.print("Mag: ");
-  Serial.print(mag.getRawData().x);
-  Serial.print(" ");
-  Serial.print(mag.getRawData().y);
-  Serial.print(" ");
-  Serial.print(mag.getRawData().z);
+  // Serial.print("Mag: ");
+  // Serial.print(mag.getRawData().x);
+  // Serial.print(" ");
+  // Serial.print(mag.getRawData().y);
+  // Serial.print(" ");
+  // Serial.print(mag.getRawData().z);
 
-  Serial.print("|");
+  // Serial.print("|");
 
   // Serial.print("Rotations: ");
-  // Serial.print(ahrs.rotations.x);
+  // Serial.print((ahrs.rotations.x * 180) / M_PI);
   // Serial.print(" ");
-  // Serial.print(ahrs.rotations.y);
+  // Serial.print(ahrs.rotations.y * 180.0 / M_PI);
   // Serial.print(" ");
-  // Serial.print(ahrs.rotations.z);
+  // Serial.print(ahrs.rotations.z * 180.0 / M_PI);
 
   Serial.println();
-  delay(1000.0 / 12.0);
+  delay(1000.0 / 100.0);
 }

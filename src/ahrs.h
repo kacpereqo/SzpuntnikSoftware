@@ -1,18 +1,32 @@
 #pragma once
 
+#include "math.h"
 #include "vec.hpp"
+#include <Arduino.h>
 #include <cmath>
+#include <cstdint>
 
 struct Ahrs {
+
+private:
+  uint32_t last_update = 0;
+
+public:
   Vec3<float> rotations;
 
+  Ahrs() { this->rotations = {0.0f, 0.0f, 0.0f}; }
   // complementary filter
   void update(Vec3<float> &acc, Vec3<float> &gyro, Vec3<float> &mag) {
-    Vec3<float> angles = {0.0f, 0.0f, 0.0f};
+
+    const float dt = (millis() - this->last_update) / 1000.0f;
 
     Vec3<float> TempAngles = {0.0f, 0.0f, 0.0f};
+    Vec3<float> gyroAngles = gyro * dt;
+    Serial
+        .print(gyroAngles.x)
+        // Vec3<float> gyroAngles = {0.0f, 0.0f, 0.0f};
 
-    TempAngles.x = atan2(acc.y, acc.z);
+        TempAngles.x = atan2(acc.y, acc.z);
     TempAngles.y = atan2(-acc.x, sqrt(acc.y * acc.y + acc.z * acc.z));
 
     TempAngles.z = atan2(mag.z * sin(TempAngles.y) - mag.y * cos(TempAngles.y),
@@ -22,8 +36,13 @@ struct Ahrs {
 
     constexpr double gain = 0.98;
 
-    angles.x = angles.x * gain + TempAngles.x * (1.0 - gain);
-    angles.y = angles.y * gain + TempAngles.y * (1.0 - gain);
-    angles.z = angles.z * gain + TempAngles.z * (1.0 - gain);
+    rotations.x = (rotations.x + (gyroAngles.x / 180 * M_PI)) * gain +
+                  TempAngles.x * (1.0 - gain);
+    rotations.y = (rotations.y + (gyroAngles.y / 180 * M_PI)) * gain +
+                  TempAngles.y * (1.0 - gain);
+    rotations.z = (rotations.z + (gyroAngles.z / 180 * M_PI)) * gain +
+                  TempAngles.z * (1.0 - gain);
+
+    this->last_update = millis();
   }
 };
