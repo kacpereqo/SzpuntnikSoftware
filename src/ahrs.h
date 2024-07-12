@@ -10,6 +10,40 @@ struct Ahrs {
 
 private:
   uint32_t last_update = 0;
+  float dt = 0.0f;
+  const float alpha = 0.95;
+
+  void calculatePitch(Vec3<float> &acc, Vec3<float> &gyro) {
+    const float pitch_gyro = (gyro.x * dt) / (180.0f * M_PI);
+    const float pitch_acc = atan2(acc.y, sqrt(acc.x * acc.x + acc.z * acc.z));
+
+    this->rotations.x = this->alpha * (this->rotations.x + pitch_gyro) +
+                        (1 - this->alpha) * pitch_acc;
+  }
+
+  void calculateRoll(Vec3<float> &acc, Vec3<float> &gyro) {
+    const float roll_gyro = gyro.y * dt / (180.0f * M_PI);
+    const float roll_acc = atan2(-acc.x, sqrt(acc.y * acc.y + acc.z * acc.z));
+
+    this->rotations.y = this->alpha * (this->rotations.y + roll_gyro) +
+                        (1 - this->alpha) * roll_acc;
+  }
+
+  void calculateYaw(Vec3<float> &acc, Vec3<float> &mag, Vec3<float> &gyro) {
+
+    const float yaw_gyro = (gyro.z * dt) / (180.0f * M_PI);
+    const float yaw_acc =
+        atan2(mag.z * sin(this->rotations.x) - mag.y * cos(this->rotations.x),
+              mag.x * cos(this->rotations.y) +
+                  mag.y * sin(this->rotations.x) * sin(this->rotations.y) +
+                  mag.z * sin(this->rotations.y) * cos(this->rotations.x));
+
+    Serial.print(yaw_acc);
+
+    // Serial.print(yaw_gyro * this->alpha);
+    this->rotations.z = this->alpha * (this->rotations.z + yaw_gyro) +
+                        (1 - this->alpha) * yaw_acc;
+  }
 
 public:
   Vec3<float> rotations;
@@ -18,30 +52,11 @@ public:
   // complementary filter
   void update(Vec3<float> &acc, Vec3<float> &gyro, Vec3<float> &mag) {
 
-    const float dt = (millis() - this->last_update) / 1000.0f;
+    this->dt = (millis() - this->last_update) / 1000.0f;
 
-    Vec3<float> TempAngles = {0.0f, 0.0f, 0.0f};
-    Vec3<float> gyroAngles = gyro * dt;
-    Serial
-        .print(gyroAngles.x)
-        // Vec3<float> gyroAngles = {0.0f, 0.0f, 0.0f};
-
-        TempAngles.x = atan2(acc.y, acc.z);
-    TempAngles.y = atan2(-acc.x, sqrt(acc.y * acc.y + acc.z * acc.z));
-
-    TempAngles.z = atan2(mag.z * sin(TempAngles.y) - mag.y * cos(TempAngles.y),
-                         mag.x * cos(TempAngles.x) +
-                             mag.y * sin(TempAngles.x) * sin(TempAngles.y) +
-                             mag.z * sin(TempAngles.x) * cos(TempAngles.y));
-
-    constexpr double gain = 0.98;
-
-    rotations.x = (rotations.x + (gyroAngles.x / 180 * M_PI)) * gain +
-                  TempAngles.x * (1.0 - gain);
-    rotations.y = (rotations.y + (gyroAngles.y / 180 * M_PI)) * gain +
-                  TempAngles.y * (1.0 - gain);
-    rotations.z = (rotations.z + (gyroAngles.z / 180 * M_PI)) * gain +
-                  TempAngles.z * (1.0 - gain);
+    this->calculatePitch(acc, gyro);
+    this->calculateRoll(acc, gyro);
+    this->calculateYaw(acc, mag, gyro);
 
     this->last_update = millis();
   }

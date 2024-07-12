@@ -11,9 +11,8 @@
 void setup() {
   Serial.begin(115200);
   while (!Serial)
-    Serial.println("Waiting for Serial connection");
 
-  Wire.begin();
+    Wire.begin();
 }
 
 enum class States {
@@ -75,11 +74,11 @@ void loop() {
   // Serial.print("|");
 
   // Serial.print("Mag: ");
-  // Serial.print(mag.getRawData().x);
+  // Serial.print(mag.getData().x);
   // Serial.print(" ");
-  // Serial.print(mag.getRawData().y);
+  // Serial.print(mag.getData().y);
   // Serial.print(" ");
-  // Serial.print(mag.getRawData().z);
+  // Serial.print(mag.getData().z);
 
   // Serial.print("|");
 

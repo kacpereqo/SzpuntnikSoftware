@@ -42,13 +42,23 @@ void Magnetometer::calibrate() {
 }
 
 Vec3<float> &Magnetometer::getData() {
+  this->calibrate();
   Vec3<int16_t> raw = this->getRawData();
 
-  Vec3<float> data = {
-      raw.x / this->scale_factor,
-      raw.y / this->scale_factor,
-      raw.z / this->scale_factor,
+  this->data = {
+      // normalize
+      (raw.x - this->min_values_raw.x) /
+              (float)(this->max_values_raw.x - this->min_values_raw.x) * 2.0f -
+          1.0f,
+      (raw.y - this->min_values_raw.y) /
+              (float)(this->max_values_raw.y - this->min_values_raw.y) * 2.0f -
+          1.0f,
+      (raw.z - this->min_values_raw.z) /
+              (float)(this->max_values_raw.z - this->min_values_raw.z) * 2.0f -
+          1.0f,
   };
+
+  return data;
 }
 
 Vec3<int16_t> &Magnetometer::getRawData() {
