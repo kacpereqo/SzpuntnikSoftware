@@ -32,17 +32,11 @@ private:
   void calculateYaw(Vec3<float> &acc, Vec3<float> &mag, Vec3<float> &gyro) {
 
     const float yaw_gyro = (gyro.z * dt) / (180.0f * M_PI);
-    const float yaw_acc =
-        atan2(mag.z * sin(this->rotations.x) - mag.y * cos(this->rotations.x),
-              mag.x * cos(this->rotations.y) +
-                  mag.y * sin(this->rotations.x) * sin(this->rotations.y) +
-                  mag.z * sin(this->rotations.y) * cos(this->rotations.x));
+    const float yaw_acc = atan2(mag.y, mag.x);
+    constexpr float declination = 6.94f / 180.0f * M_PI;
 
-    Serial.print(yaw_acc);
-
-    // Serial.print(yaw_gyro * this->alpha);
     this->rotations.z = this->alpha * (this->rotations.z + yaw_gyro) +
-                        (1 - this->alpha) * yaw_acc;
+                        (1 - this->alpha) * yaw_acc + declination;
   }
 
 public:

@@ -4,4 +4,5 @@ import { RouterView } from 'vue-router'
 
 <template>
   <RouterView />
+  <div @click></div>
 </template>

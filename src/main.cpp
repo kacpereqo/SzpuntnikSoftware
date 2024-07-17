@@ -82,13 +82,13 @@ void loop() {
 
   // Serial.print("|");
 
-  // Serial.print("Rotations: ");
-  // Serial.print((ahrs.rotations.x * 180) / M_PI);
-  // Serial.print(" ");
-  // Serial.print(ahrs.rotations.y * 180.0 / M_PI);
-  // Serial.print(" ");
-  // Serial.print(ahrs.rotations.z * 180.0 / M_PI);
+  Serial.print("Rotations: ");
+  Serial.print((ahrs.rotations.x * 180) / M_PI);
+  Serial.print(" ");
+  Serial.print(ahrs.rotations.y * 180.0 / M_PI);
+  Serial.print(" ");
+  Serial.print(ahrs.rotations.z * 180.0 / M_PI);
 
   Serial.println();
-  delay(1000.0 / 100.0);
+  // delay(1000.0 / 100.0);
 }
