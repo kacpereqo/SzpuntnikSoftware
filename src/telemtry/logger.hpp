@@ -4,8 +4,10 @@
 #include <functional>
 #include <stdint.h>
 
+template<typename T>
 class Logger;
 
+template<typename T>
 class LoggerExporter {
       protected:
 	Logger ***loggersManaged;
@@ -27,6 +29,7 @@ class LoggerExporter {
 	virtual LoggerExporter *dump();
 };
 
+template<typename T>
 class Logger {
 	Logger *prepareValues(int valuesSize);
 

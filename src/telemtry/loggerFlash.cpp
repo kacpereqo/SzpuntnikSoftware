@@ -1,5 +1,7 @@
 #include "loggerFlash.hpp"
 
-LoggerExporterFlash::LoggerExporterFlash(int loggersManagedSize) : LoggerExporter(loggersManagedSize) {}
+template<typename T>
+LoggerExporterFlash<T>::LoggerExporterFlash(int loggersManagedSize) : LoggerExporter<T>(loggersManagedSize) {}
 
-LoggerExporter *LoggerExporterFlash::dump() {}
+template<typename T>
+LoggerExporter<T> *LoggerExporterFlash<T>::dump() { return this; }

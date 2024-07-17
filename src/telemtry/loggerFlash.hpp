@@ -6,7 +6,8 @@
 
 #include "logger.hpp"
 
-class LoggerExporterFlash : public LoggerExporter {
+template<typename T>
+class LoggerExporterFlash : public LoggerExporter<T> {
       public:
 	LoggerExporterFlash(int loggersManagedSize);
 
