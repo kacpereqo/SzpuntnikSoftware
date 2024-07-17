@@ -11,6 +11,6 @@ class LoggerExporterFlash : public LoggerExporter {
 	LoggerExporterFlash(int loggersManagedSize);
 
 	LoggerExporter *dump();
-}
+};
 
 #endif
