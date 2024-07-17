@@ -2,7 +2,8 @@
 
 Logger::prepareValues(int valuesSize) {
 	this->valuesSize{valuesSize};
-	this->values = int16_t[this->valuesSize];
+	this->values = new int16_t[this->valuesSize];
+	this->valuesTimestamps = new uint32_t[this->valuesSize];
 	this->freeValuesIndex{0};
 
 	return this;
@@ -15,11 +16,17 @@ Logger *Logger::wipeValues() {
 
 Logger::Logger(int valuesSize) { this->prepareValues(valuesSize); }
 
-Logger *Logger::addToValues(int16_t value) {
+Logger::~Logger() {
+	delete[this->valuesSize] (this->values);
+	delete[this->valuesSize] (this->valuesTimestamps);
+}
+
+Logger *Logger::addToValues(int16_t value, uint32_t timestamp) {
 	if (freeValuesIndex >= this->valuesSize) {
 		// TODO To decide what to do with overflow
 	} else {
-		this->values[this->freeValuesIndex++] = value;
+		this->values[this->freeValuesIndex] = value;
+		this->valuesTimestamps[this->freeValuesIndex++] = timestamp;
 	}
 
 	return this;
@@ -28,7 +35,7 @@ Logger *Logger::addToValues(int16_t value) {
 int Logger::getValuesSize() { return this->valuesSize; };
 
 int16_t *[] Logger::getFilledValues() {
-	int16_t[this->freeValuesIndex] filledValues;
+	int16_t filledValues[this->freeValuesIndex];
 	std::copy(this->values, this->values + this->freeValuesIndex, filledValues);
 
 	return filledValues;
@@ -36,6 +43,13 @@ int16_t *[] Logger::getFilledValues() {
 
 int Logger::getFilledValuesSize() {
 	return this->freeValuesIndex;
+}
+
+uint32_t *[] Logger::getFilledValuesTimestamps() {
+	uint32_t filledValuesTimestamps[this->freeValuesIndex];
+	std::copy(this->valuesTimestamps, this->valuesTimestamps + this->freeValuesIndex, filledValuesTimestamps);
+
+	return filledValueTimestamps;
 }
 
 LoggerExporter *LoggerExporter::prepareLoggersManaged(int loggersManagedSize) {
@@ -70,10 +84,4 @@ LoggerExporter *LoggerExporter::iterateOverLoggersManaged(std::function<void(Log
 	}
 
 	return this;
-}
-
-LoggerExporterFlash::LoggerExporterFlash(int loggersManagedSize) : LoggerExporter(loggersManagedSize) {}
-
-LoggerExporter *LoggerExporterFlash::dump() {
-    
 }

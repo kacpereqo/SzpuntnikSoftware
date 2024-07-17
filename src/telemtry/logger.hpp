@@ -1,32 +1,41 @@
-#include <functional>
+#ifndef LOGGER
+#define LOGGER
 
-class LoggerExporter;
+#include <functional>
+#include <stdint.h>
+
+class LoggerExporter {
+};
 
 class Logger {
 	Logger *prepareValues(int valuesSize);
 
       protected:
-	int16_t[] * values;
+	int16_t *values[];
+	uint32_t *valuesTimestamps[];
+
 	int valuesSize;
 	int freeValuesIndex;
 
-	friend LoggerExporter::dump();
+	friend LoggerExporter *LoggerExporter::dump();
 	Logger *wipeValues();
 
       public:
 	Logger(int valuesSize);
+	~Logger();
 
-	Logger *addToValues(int16_t value);
+	Logger *addToValues(int16_t value, uint32_t timestamp);
 
 	int getValuesSize();
 
 	int16_t *[] getFilledValues();
+	uint32_t *[] getFilledValuesTimestamps();
 	int getFilledValuesSize();
-}
+};
 
 class LoggerExporter {
       protected:
-	Logger *[] * loggersManaged;
+	Logger **loggersManaged[];
 	int loggersManagedSize;
 	int freeLoggersManagedIndex;
 
@@ -38,19 +47,11 @@ class LoggerExporter {
 
       public:
 	LoggerExporter(int loggersManagedSize);
+	~LoggerExporter();
 
 	LoggerExporter *addToLoggersManaged(Logger *logger);
 
-	virtual LoggerExporter *dump() {};
-}
+	virtual LoggerExporter *dump();
+};
 
-class LoggerExporterFlash : public LoggerExporter {
-      public:
-	LoggerExporterFlash(int loggersManagedSize);
-
-	LoggerExporter *dump();
-}
-
-class LoggerExporterSD : public LoggerExporter {
-	// TODO Decide if SD is needed
-}
+#endif
