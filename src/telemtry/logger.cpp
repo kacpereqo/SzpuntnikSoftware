@@ -2,9 +2,10 @@
 
 #include "logger.hpp"
 
-Logger *Logger::prepareValues(int valuesSize) {
+template<class T>
+Logger<T> *Logger<T>::prepareValues(int valuesSize) {
 	this->valuesSize = valuesSize;
-	*this->values = new int16_t[this->valuesSize];
+	*this->values = new T[this->valuesSize];
 	*this->valuesTimestamps = new uint32_t[this->valuesSize];
 	this->freeValuesIndex = 0;
 
@@ -63,7 +64,7 @@ uint32_t **Logger<T>::getFilledValuesTimestamps() {
 template<typename T>
 LoggerExporter<T> *LoggerExporter<T>::prepareLoggersManaged(int loggersManagedSize) {
 	this->loggersManagedSize = loggersManagedSize;
-	*this->loggersManaged = new Logger *[this->loggersManagedSize];
+	*this->loggersManaged = new Logger<T> *[this->loggersManagedSize];
 	this->loggersManagedSize = 0;
 
 	return this;

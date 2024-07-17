@@ -1,5 +1,7 @@
 #pragma once
 
+#include "telemtry/logger.hpp"
+
 #include "vec.hpp"
 #include <cstdint>
 
@@ -9,6 +11,7 @@ protected:
   uint8_t rate;
   float scale_factor;
 
+  Logger<Vec3<int16_t>> logger{256};
 public:
   virtual void configure() = 0;
   virtual void calibrate() = 0;
