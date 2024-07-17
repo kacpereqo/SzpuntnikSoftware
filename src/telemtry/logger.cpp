@@ -2,7 +2,7 @@
 
 #include "logger.hpp"
 
-template<class T>
+template<typename T>
 Logger<T> *Logger<T>::prepareValues(int valuesSize) {
 	this->valuesSize = valuesSize;
 	*this->values = new T[this->valuesSize];
