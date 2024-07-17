@@ -4,11 +4,13 @@
 #include <functional>
 #include <stdint.h>
 
+template<class T>
 class Logger;
 
+template<class T>
 class LoggerExporter {
       protected:
-	Logger ***loggersManaged;
+	Logger<T> ***loggersManaged;
 	int loggersManagedSize;
 	int freeLoggersManagedIndex;
 
@@ -16,39 +18,40 @@ class LoggerExporter {
 
 	LoggerExporter *wipeLoggersManagedValues();
 
-	LoggerExporter *iterateOverLoggersManaged(std::function<void(Logger *)> function);
+	LoggerExporter *iterateOverLoggersManaged(std::function<void(Logger<T> *)> function);
 
       public:
 	LoggerExporter(int loggersManagedSize);
 	~LoggerExporter();
 
-	LoggerExporter *addToLoggersManaged(Logger *logger);
+	LoggerExporter *addToLoggersManaged(Logger<T> *logger);
 
 	virtual LoggerExporter *dump();
 };
 
+template<class T>
 class Logger {
-	Logger *prepareValues(int valuesSize);
+	Logger<T> *prepareValues(int valuesSize);
 
       protected:
-	int16_t **values;
+	T **values;
 	uint32_t **valuesTimestamps;
 
 	int valuesSize;
 	int freeValuesIndex;
 
-	friend LoggerExporter;
-	Logger *wipeValues();
+	friend LoggerExporter<T>;
+	Logger<T> *wipeValues();
 
       public:
 	Logger(int valuesSize);
 	~Logger();
 
-	Logger *addToValues(int16_t value, uint32_t timestamp);
+	Logger<T> *addToValues(T value, uint32_t timestamp);
 
 	int getValuesSize();
 
-	int16_t **getFilledValues();
+	T **getFilledValues();
 	uint32_t **getFilledValuesTimestamps();
 	int getFilledValuesSize();
 };
