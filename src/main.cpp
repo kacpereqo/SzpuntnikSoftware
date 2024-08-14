@@ -1,94 +1,112 @@
 
-#include "disk.hpp"
-#include "math.h"
-#include "telemtry\accelerometer.hpp"
-#include "telemtry\gyroscope.hpp"
-#include "telemtry\magnetometer.hpp"
-#include <LSM6.h>
-#include <Wire.h>
-#include <ahrs.h>
+// #include "disk.hpp"
+// #include "math.h"
+// #include "telemtry\accelerometer.hpp"
+// #include "telemtry\gyroscope.hpp"
+// #include "telemtry\magnetometer.hpp"
+// #include <LSM6.h>
+// #include <Wire.h>
+// #include <ahrs.h>
+#include <SPI.h>
+#include <SD.h>
 
-void setup() {
-  Serial.begin(115200);
+// set up variables using the SD utility library functions:
+Sd2Card card;
+SdVolume volume;
+SdFile root;
+
+// change this to match your SD shield or module;
+// Arduino Ethernet shield: pin 4
+// Adafruit SD shields and modules: pin 10
+// Sparkfun SD shield: pin 8
+// MKRZero SD: SDCARD_SS_PIN
+const int chipSelect = 7;
+
+void setup()
+{
+  // Open serial communications and wait for port to open:
+  Serial.begin(9600);
   while (!Serial)
-
-    Wire.begin();
-}
-
-enum class States {
-  idle,
-  calibrating,
-  readyToTakeOff,
-  flying,
-  landing,
-  landed,
-};
-
-void loop() {
-  static Accelerometer accel(Accelerometer::Hz416, Accelerometer::g2);
-  static Gyroscope gyro(Gyroscope::Hz416, Gyroscope::dps2000);
-  static Magnetometer mag(Magnetometer::Hz80, Magnetometer::gauss4);
-
-  static Disk disk;
-  static Ahrs ahrs;
-
-  static States state = States::idle;
-
-  switch (state) {
-  case States::idle:
-    break;
-  case States::calibrating:
-    break;
-  case States::readyToTakeOff:
-    break;
-  case States::flying:
-    break;
-  case States::landing:
-    break;
-  case States::landed:
-    break;
-  default:
-    break;
+  {
+    ; // wait for serial port to connect. Needed for native USB port only
   }
 
-  // disk.Save(accel.getData(), gyro.getData(), mag.getData(), ahrs.rotations);
-  ahrs.update(accel.getData(), gyro.getData(), mag.getData());
+  Serial.print("\nInitializing SD card...");
 
-  // // print everything
-  // Serial.print("Accel: ");
-  // Serial.print(accel.getData().x);
-  // Serial.print(" ");
-  // Serial.print(accel.getData().y);
-  // Serial.print(" ");
-  // Serial.print(accel.getData().z);
+  // we'll use the initialization code from the utility libraries
+  // since we're just testing if the card is working!
+  if (!card.init(SPI_HALF_SPEED, chipSelect))
+  {
+    Serial.println("initialization failed. Things to check:");
+    Serial.println("* is a card inserted?");
+    Serial.println("* is your wiring correct?");
+    Serial.println("* did you change the chipSelect pin to match your shield or module?");
+    while (1)
+      ;
+  }
+  else
+  {
+    Serial.println("Wiring is correct and a card is present.");
+  }
 
-  // Serial.print("|");
-
-  // Serial.print("Gyro: ");
-  // Serial.print(gyro.getData().x);
-  // Serial.print(" ");
-  // Serial.print(gyro.getData().y);
-  // Serial.print(" ");
-  // Serial.print(gyro.getData().z);
-
-  // Serial.print("|");
-
-  // Serial.print("Mag: ");
-  // Serial.print(mag.getData().x);
-  // Serial.print(" ");
-  // Serial.print(mag.getData().y);
-  // Serial.print(" ");
-  // Serial.print(mag.getData().z);
-
-  // Serial.print("|");
-
-  Serial.print("Rotations: ");
-  Serial.print((ahrs.rotations.x * 180) / M_PI);
-  Serial.print(" ");
-  Serial.print(ahrs.rotations.y * 180.0 / M_PI);
-  Serial.print(" ");
-  Serial.print(ahrs.rotations.z * 180.0 / M_PI);
-
+  // print the type of card
   Serial.println();
-  // delay(1000.0 / 100.0);
+  Serial.print("Card type:         ");
+  switch (card.type())
+  {
+  case SD_CARD_TYPE_SD1:
+    Serial.println("SD1");
+    break;
+  case SD_CARD_TYPE_SD2:
+    Serial.println("SD2");
+    break;
+  case SD_CARD_TYPE_SDHC:
+    Serial.println("SDHC");
+    break;
+  default:
+    Serial.println("Unknown");
+  }
+
+  // Now we will try to open the 'volume'/'partition' - it should be FAT16 or FAT32
+  if (!volume.init(card))
+  {
+    Serial.println("Could not find FAT16/FAT32 partition.\nMake sure you've formatted the card");
+    while (1)
+      ;
+  }
+
+  Serial.print("Clusters:          ");
+  Serial.println(volume.clusterCount());
+  Serial.print("Blocks x Cluster:  ");
+  Serial.println(volume.blocksPerCluster());
+
+  Serial.print("Total Blocks:      ");
+  Serial.println(volume.blocksPerCluster() * volume.clusterCount());
+  Serial.println();
+
+  // print the type and size of the first FAT-type volume
+  uint32_t volumesize;
+  Serial.print("Volume type is:    FAT");
+  Serial.println(volume.fatType(), DEC);
+
+  volumesize = volume.blocksPerCluster(); // clusters are collections of blocks
+  volumesize *= volume.clusterCount();    // we'll have a lot of clusters
+  volumesize /= 2;                        // SD card blocks are always 512 bytes (2 blocks are 1KB)
+  Serial.print("Volume size (Kb):  ");
+  Serial.println(volumesize);
+  Serial.print("Volume size (Mb):  ");
+  volumesize /= 1024;
+  Serial.println(volumesize);
+  Serial.print("Volume size (Gb):  ");
+  Serial.println((float)volumesize / 1024.0);
+
+  Serial.println("\nFiles found on the card (name, date and size in bytes): ");
+  root.openRoot(volume);
+
+  // list all files in the card with date and size
+  root.ls(LS_R | LS_DATE | LS_SIZE);
+}
+
+void loop(void)
+{
 }
