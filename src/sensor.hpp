@@ -3,7 +3,8 @@
 #include "vec.hpp"
 #include <cstdint>
 
-class Sensor {
+class Sensor
+{
 protected:
   uint8_t scale;
   uint8_t rate;

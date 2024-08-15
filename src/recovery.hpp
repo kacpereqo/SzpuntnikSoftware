@@ -1,3 +1,20 @@
 #pragma once
+#include "Servo.h"
 
-struct Recovery {};
+class Recovery
+{
+private:
+    Servo servo;
+
+public:
+    enum TriggeredBy
+    {
+        Timer,
+        Altitude,
+        Rotation,
+        Manual,
+    };
+
+    Recovery();
+    void deploy(TriggeredBy trigger);
+};

@@ -5,20 +5,23 @@
 #include <cstdint>
 
 Accelerometer::Accelerometer(AccelRate rate, AccelScale scale)
-    : sensor(getLSM6()) {
+    : sensor(getLSM6())
+{
   this->sensor = getLSM6();
   this->rate = rate;
   this->scale = scale;
   this->scale_factor = 1 << (16 - (scale + 2));
   this->sensor.enableDefault();
 
-  calibrate();
+  // calibrate();
 }
 
 void Accelerometer::configure() {}
 
-void Accelerometer::calibrate() {
-  for (int i = 0; i < CALIBRATION_SAMPLES; i++) {
+void Accelerometer::calibrate()
+{
+  for (int i = 0; i < CALIBRATION_SAMPLES; i++)
+  {
     offset_raw += this->getRawData();
 
     delay(CALIBRATION_DELAY);
@@ -35,7 +38,8 @@ void Accelerometer::calibrate() {
   Serial.println(offset_raw.z);
 }
 
-Vec3<float> &Accelerometer::getData() {
+Vec3<float> &Accelerometer::getData()
+{
   (void)this->getRawData();
 
   this->data = {
@@ -47,10 +51,16 @@ Vec3<float> &Accelerometer::getData() {
   return data;
 }
 
-Vec3<int16_t> &Accelerometer::getRawData() {
+Vec3<int16_t> &Accelerometer::getRawData()
+{
   this->sensor.readAcc();
 
   this->raw = {this->sensor.a.x, this->sensor.a.y, this->sensor.a.z};
 
   return raw;
+}
+
+bool Accelerometer::tookOff()
+{
+  this->data.lenght() > TOOK_OFF_THRESHOLD;
 }
