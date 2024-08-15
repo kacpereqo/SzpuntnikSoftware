@@ -13,7 +13,7 @@ Accelerometer::Accelerometer(AccelRate rate, AccelScale scale)
   this->scale_factor = 1 << (16 - (scale + 2));
   this->sensor.enableDefault();
 
-  calibrate();
+  // calibrate();
 }
 
 void Accelerometer::configure() {}
@@ -58,4 +58,9 @@ Vec3<int16_t> &Accelerometer::getRawData()
   this->raw = {this->sensor.a.x, this->sensor.a.y, this->sensor.a.z};
 
   return raw;
+}
+
+bool Accelerometer::tookOff()
+{
+  this->data.lenght() > TOOK_OFF_THRESHOLD;
 }

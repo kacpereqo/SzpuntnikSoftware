@@ -40,4 +40,6 @@ public:
 
   Vec3<float> &getData() override;
   Vec3<int16_t> &getRawData() override;
+
+  bool tookOff();
 };
