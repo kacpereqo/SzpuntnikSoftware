@@ -4,7 +4,8 @@
 #include <LSM6.h>
 #include <cstdint>
 
-class Accelerometer : public Sensor {
+class Accelerometer : public Sensor
+{
 private:
   Vec3<int16_t> offset_raw;
   Vec3<int16_t> raw;
@@ -12,14 +13,16 @@ private:
   LSM6 &sensor;
 
 public:
-  enum AccelScale : uint8_t {
+  enum AccelScale : uint8_t
+  {
     g2,
     g4,
     g8,
     g16,
   };
 
-  enum AccelRate : uint8_t {
+  enum AccelRate : uint8_t
+  {
     Hz13,
     Hz26,
     Hz52,

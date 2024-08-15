@@ -5,7 +5,8 @@
 #include <LIS3MDL.h>
 #include <cstdint>
 
-class Magnetometer : public Sensor {
+class Magnetometer : public Sensor
+{
 private:
   Vec3<int16_t> max_values_raw;
   Vec3<int16_t> min_values_raw;
@@ -15,14 +16,16 @@ private:
   LIS3MDL &sensor;
 
 public:
-  enum MagScale : uint8_t {
+  enum MagScale : uint8_t
+  {
     gauss4,
     gauss8,
     gauss12,
     gauss16,
   };
 
-  enum MagRate : uint8_t {
+  enum MagRate : uint8_t
+  {
     Hz0_625,
     Hz1_25,
     Hz2_5,

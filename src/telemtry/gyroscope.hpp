@@ -4,14 +4,16 @@
 #include <LSM6.h>
 #include <cstdint>
 
-class Gyroscope : public Sensor {
+class Gyroscope : public Sensor
+{
 private:
   Vec3<int16_t> raw;
   Vec3<float> data;
   LSM6 &sensor;
 
 public:
-  enum GyroScale : uint8_t {
+  enum GyroScale : uint8_t
+  {
     dps125,
     dps245,
     dps500,
@@ -19,7 +21,8 @@ public:
     dps2000,
   };
 
-  enum GyroRate : uint8_t {
+  enum GyroRate : uint8_t
+  {
     Hz13,
     Hz26,
     Hz52,

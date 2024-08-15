@@ -1,7 +1,8 @@
 #include "gyroscope.hpp"
 #include "utils/singletons.hpp"
 
-Gyroscope::Gyroscope(GyroRate rate, GyroScale scale) : sensor(getLSM6()) {
+Gyroscope::Gyroscope(GyroRate rate, GyroScale scale) : sensor(getLSM6())
+{
   this->sensor = getLSM6();
   this->sensor.enableDefault();
   this->scale_factor = 32768.0f / 245.0f;
@@ -11,7 +12,8 @@ void Gyroscope::configure() {}
 
 void Gyroscope::calibrate() {}
 
-Vec3<float> &Gyroscope::getData() {
+Vec3<float> &Gyroscope::getData()
+{
   (void)this->getRawData();
 
   this->data = {
@@ -23,7 +25,8 @@ Vec3<float> &Gyroscope::getData() {
   return data;
 }
 
-Vec3<int16_t> &Gyroscope::getRawData() {
+Vec3<int16_t> &Gyroscope::getRawData()
+{
   this->sensor.readGyro();
 
   this->raw = {this->sensor.g.x, this->sensor.g.y, this->sensor.g.z};
