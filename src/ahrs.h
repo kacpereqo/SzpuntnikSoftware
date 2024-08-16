@@ -6,22 +6,25 @@
 #include <cmath>
 #include <cstdint>
 
-struct Ahrs {
+struct Ahrs
+{
 
 private:
   uint32_t last_update = 0;
   float dt = 0.0f;
-  const float alpha = 0.95;
+  const float alpha = 0.97;
 
-  void calculatePitch(Vec3<float> &acc, Vec3<float> &gyro) {
-    const float pitch_gyro = (gyro.x * dt) / (180.0f * M_PI);
+  void calculatePitch(Vec3<float> &acc, Vec3<float> &gyro)
+  {
+    const float pitch_gyro = (gyro.x * dt) * DEG_TO_RAD;
     const float pitch_acc = atan2(acc.y, sqrt(acc.x * acc.x + acc.z * acc.z));
 
     this->rotations.x = this->alpha * (this->rotations.x + pitch_gyro) +
                         (1 - this->alpha) * pitch_acc;
   }
 
-  void calculateRoll(Vec3<float> &acc, Vec3<float> &gyro) {
+  void calculateRoll(Vec3<float> &acc, Vec3<float> &gyro)
+  {
     const float roll_gyro = gyro.y * dt / (180.0f * M_PI);
     const float roll_acc = atan2(-acc.x, sqrt(acc.y * acc.y + acc.z * acc.z));
 
@@ -29,7 +32,8 @@ private:
                         (1 - this->alpha) * roll_acc;
   }
 
-  void calculateYaw(Vec3<float> &acc, Vec3<float> &mag, Vec3<float> &gyro) {
+  void calculateYaw(Vec3<float> &acc, Vec3<float> &mag, Vec3<float> &gyro)
+  {
 
     const float yaw_gyro = (gyro.z * dt) / (180.0f * M_PI);
     const float yaw_acc = atan2(mag.y, mag.x);
@@ -44,7 +48,8 @@ public:
 
   Ahrs() { this->rotations = {0.0f, 0.0f, 0.0f}; }
   // complementary filter
-  void update(Vec3<float> &acc, Vec3<float> &gyro, Vec3<float> &mag) {
+  void update(Vec3<float> &acc, Vec3<float> &gyro, Vec3<float> &mag)
+  {
 
     this->dt = (millis() - this->last_update) / 1000.0f;
 
