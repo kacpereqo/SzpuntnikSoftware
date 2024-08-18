@@ -6,16 +6,17 @@
 #include "telemtry/magnetometer.hpp"
 #include <LSM6.h>
 #include <Wire.h>
-#include <ahrs.h>
+#include "ahrs.hpp"
 #include "timer.hpp"
 #include "utils/constants.hpp"
 #include "recovery.hpp"
 #include "buzzer.hpp"
-// #include "telemtry/innerBarometer.hpp"
+#include "telemtry/innerBarometer.hpp"
 
 void setup()
 {
   Serial.begin(115200);
+
   while (!Serial)
 
     Wire.begin();
@@ -39,7 +40,7 @@ void loop()
   static Accelerometer accel(Accelerometer::Hz416, Accelerometer::g2);
   static Gyroscope gyro(Gyroscope::Hz416, Gyroscope::dps2000);
   static Magnetometer mag(Magnetometer::Hz80, Magnetometer::gauss4);
-  // static InnerBarometer innerBaro;
+  static InnerBarometer innerBaro;
 
   static Ahrs ahrs;
 
@@ -52,6 +53,8 @@ void loop()
   Serial.print("State: ");
   Serial.print((int)state);
   Serial.print(" ");
+
+  Serial.println(innerBaro.getDataInMeters());
 
   switch (state)
   {
@@ -101,11 +104,15 @@ void loop()
   }
   case States::landing:
   {
+    if (accel.getData().lenght() < 2)
+    {
+      state = States::landed;
+    }
     break;
   }
   case States::landed:
   {
-    break;
+    buzzer.playNyanCat();
   }
   default:
   {

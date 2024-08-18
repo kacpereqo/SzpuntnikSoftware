@@ -21,3 +21,8 @@ void Buzzer::play(int frequency, int duration)
 {
     tone(this->pin, frequency, duration);
 }
+
+void Buzzer::playNyanCat()
+{
+    ;
+}
