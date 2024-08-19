@@ -9,8 +9,8 @@
 
 void Ahrs::calculatePitch(Vec3<float> &acc, Vec3<float> &gyro)
 {
-    const float pitch_gyro = (gyro.x * this->dt) * DEG_TO_RAD;
-    const float pitch_acc = atan2(acc.y, sqrt(acc.x * acc.x + acc.z * acc.z));
+    const float pitch_gyro = (gyro.x * this->dt);
+    const float pitch_acc = atan2(acc.y, sqrt(acc.x * acc.x + acc.z * acc.z)) * RAD_TO_DEG;
 
     this->rotations.x = this->alpha * (this->rotations.x + pitch_gyro) +
                         (1 - this->alpha) * pitch_acc;
@@ -18,8 +18,8 @@ void Ahrs::calculatePitch(Vec3<float> &acc, Vec3<float> &gyro)
 
 void Ahrs::calculateRoll(Vec3<float> &acc, Vec3<float> &gyro)
 {
-    const float roll_gyro = gyro.y * this->dt / (180.0f * M_PI);
-    const float roll_acc = atan2(-acc.x, sqrt(acc.y * acc.y + acc.z * acc.z));
+    const float roll_gyro = gyro.y * this->dt;
+    const float roll_acc = atan2(-acc.x, sqrt(acc.y * acc.y + acc.z * acc.z)) * RAD_TO_DEG;
 
     this->rotations.y = this->alpha * (this->rotations.y + roll_gyro) +
                         (1 - this->alpha) * roll_acc;
@@ -28,9 +28,9 @@ void Ahrs::calculateRoll(Vec3<float> &acc, Vec3<float> &gyro)
 void Ahrs::calculateYaw(Vec3<float> &acc, Vec3<float> &mag, Vec3<float> &gyro)
 {
 
-    const float yaw_gyro = (gyro.z * this->dt) / (180.0f * M_PI);
+    const float yaw_gyro = (gyro.z * this->dt);
     const float yaw_acc = atan2(mag.y, mag.x);
-    constexpr float declination = 6.94f / 180.0f * M_PI;
+    constexpr float declination = 6.94f;
 
     this->rotations.z = this->alpha * (this->rotations.z + yaw_gyro) +
                         (1 - this->alpha) * yaw_acc + declination;

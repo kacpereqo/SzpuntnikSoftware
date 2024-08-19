@@ -40,7 +40,7 @@ void loop()
   static Accelerometer accel(Accelerometer::Hz416, Accelerometer::g2);
   static Gyroscope gyro(Gyroscope::Hz416, Gyroscope::dps2000);
   static Magnetometer mag(Magnetometer::Hz80, Magnetometer::gauss4);
-  static InnerBarometer innerBaro;
+  // static InnerBarometer innerBaro;
 
   static Ahrs ahrs;
 
@@ -48,13 +48,13 @@ void loop()
   static Timer launchTimer;
 
   static Recovery recovery;
-  static States state = States::calibrating;
+  static States state = States::flying;
 
-  Serial.print("State: ");
-  Serial.print((int)state);
-  Serial.print(" ");
+  // Serial.print("State: ");
+  // Serial.print((int)state);
+  // Serial.print(" ");
 
-  Serial.println(innerBaro.getDataInMeters());
+  // Serial.println(innerBaro.getDataInMeters());
 
   switch (state)
   {
@@ -82,21 +82,21 @@ void loop()
 
     if (blockTimer.doesTimeElapsed(BLOCK_PARACHUTE_TIME))
     {
-      if (launchTimer.doesTimeElapsed(TIME_TO_OPEN_PARACHUTE))
-      {
-        state = States::landing;
-        recovery.deploy(Recovery::TriggeredBy::Timer);
-      }
+      // if (launchTimer.doesTimeElapsed(TIME_TO_OPEN_PARACHUTE))
+      // {
+      // state = States::landing;
+      // recovery.deploy(Recovery::TriggeredBy::Timer);
+      // }
 
       // if (innerBaro.getDataInMeters() < ALTITUDE_TO_OPEN_PARACHUTE)
       // {
       // recovery.deploy(Recovery::TriggeredBy::Altitude);
       // }
-
-      if (ahrs.rotations.x > ROTATION_X_THRESHOLD)
+      if (ahrs.rotations.x > ROTATION_X_THRESHOLD or ahrs.rotations.x < -ROTATION_X_THRESHOLD or ahrs.rotations.y > ROTATION_Y_THRESHOLD)
       {
-        state = States::landing;
-        recovery.deploy(Recovery::TriggeredBy::Rotation);
+        // state = States::landing;
+        Serial.println("sex");
+        // recovery.deploy(Recovery::TriggeredBy::Rotation);
       }
     }
 
@@ -151,16 +151,14 @@ void loop()
   // Serial.print("|");
 
   // Serial.print("Rotations: ");
-  // Serial.print((ahrs.rotations.x * 180) / M_PI);
   // Serial.print(",");
   // Serial.print(ahrs.rotations.y * 180.0 / M_PI);
   // Serial.print(",");
   // Serial.print(180);
   // Serial.print(",");
   // Serial.print(-180);
-  // Serial.print(" ");
-  // Serial.print(ahrs.rotations.z * 180.0 / M_PI);
 
-  Serial.println();
+  // Serial.println();
+
   delay(1000.0 / 200.0);
 }
