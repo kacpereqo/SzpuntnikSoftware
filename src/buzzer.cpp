@@ -1,9 +1,10 @@
 #include "buzzer.hpp"
 #include <Arduino.h>
+#include "utils/constants.hpp"
 
 Buzzer::Buzzer()
 {
-    this->pin = D5;
+    this->pin = BUZZER_PIN;
     pinMode(this->pin, OUTPUT);
 }
 

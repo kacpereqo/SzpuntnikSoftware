@@ -30,6 +30,7 @@ enum class States
   flying = 3,
   landing = 4,
   landed = 5,
+  test = 6,
 };
 
 void loop()
@@ -41,20 +42,16 @@ void loop()
   static Gyroscope gyro(Gyroscope::Hz416, Gyroscope::dps2000);
   static Magnetometer mag(Magnetometer::Hz80, Magnetometer::gauss4);
   static InnerBarometer innerBaro;
+  static Recovery recovery;
 
   static Ahrs ahrs;
 
   static Timer blockTimer;
   static Timer launchTimer;
 
-  static Recovery recovery;
   static States state = States::flying;
 
-  // Serial.print("State: ");
-  // Serial.print((int)state);
-  // Serial.print(" ");
-
-  Serial.println(innerBaro.altitude);
+  recovery.test();
 
   switch (state)
   {
@@ -82,13 +79,13 @@ void loop()
 
     if (blockTimer.doesTimeElapsed(BLOCK_PARACHUTE_TIME))
     {
-      // if (launchTimer.doesTimeElapsed(TIME_TO_OPEN_PARACHUTE))
-      // {
-      // state = States::landing;
-      // recovery.deploy(Recovery::TriggeredBy::Timer);
-      // }
+      if (launchTimer.doesTimeElapsed(TIME_TO_OPEN_PARACHUTE))
+      {
+        state = States::landing;
+        recovery.deploy(Recovery::TriggeredBy::Timer);
+      }
 
-      if (innerBaro.getDataInMeters() < ALTITUDE_TO_OPEN_PARACHUTE)
+      if (innerBaro.altitude < ALTITUDE_TO_OPEN_PARACHUTE)
       {
         recovery.deploy(Recovery::TriggeredBy::Altitude);
       }

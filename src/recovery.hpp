@@ -16,5 +16,6 @@ public:
     };
 
     Recovery();
+    void test();
     void deploy(TriggeredBy trigger);
 };
