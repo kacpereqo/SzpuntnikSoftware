@@ -7,10 +7,20 @@
 class InnerBarometer
 {
 public:
-    float referencePressure = 1018.6;
-    float outdoorTemp = 4.7;
-    float barometerAltitude = 1650.3;
-    float pres, temp, hum;
+    float referencePressure = 1013.15f;
+    float outdoorTemp = 15.0f;
+    float barometerAltitude = 0.0f;
+
+    float pressure;
+    float temperature;
+    float humidity;
+    float altitude;
+
+    float initAltitude;
+
+    const BME280::TempUnit temperatureUnit = (BME280::TempUnit_Celsius);
+    const BME280::PresUnit pressureUnit = (BME280::PresUnit_hPa);
+
     BME280I2C bme;
 
     InnerBarometer()
@@ -33,16 +43,30 @@ public:
             while (1)
                 ;
         }
+
+        this->initAltitude = 0.0f;
+        float tempAltitude = 0;
+
+        getData();
+        delay(100);
+
+        for (size_t i = 0; i < 10; i++)
+        {
+            getData();
+            tempAltitude += this->altitude / 10.0f;
+        }
+
+        this->initAltitude = tempAltitude;
     }
 
-    float getDataInMeters()
+    void getData()
     {
+        bme.read(this->pressure, this->temperature, this->humidity, this->temperatureUnit, this->pressureUnit);
+        this->altitude = getAltitude() - this->initAltitude;
+    }
 
-        BME280::TempUnit tempUnit(BME280::TempUnit_Celsius);
-        BME280::PresUnit presUnit(BME280::PresUnit_hPa);
-
-        bme.read(this->pres, this->temp, this->hum, tempUnit, presUnit);
-
-        return this->pres;
+    float getAltitude()
+    {
+        return EnvironmentCalculations::Altitude(this->pressure, EnvironmentCalculations::AltitudeUnit::AltitudeUnit_Meters, this->referencePressure, this->outdoorTemp, EnvironmentCalculations::TempUnit::TempUnit_Celsius);
     }
 };

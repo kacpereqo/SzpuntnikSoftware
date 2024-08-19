@@ -40,7 +40,7 @@ void loop()
   static Accelerometer accel(Accelerometer::Hz416, Accelerometer::g2);
   static Gyroscope gyro(Gyroscope::Hz416, Gyroscope::dps2000);
   static Magnetometer mag(Magnetometer::Hz80, Magnetometer::gauss4);
-  // static InnerBarometer innerBaro;
+  static InnerBarometer innerBaro;
 
   static Ahrs ahrs;
 
@@ -54,7 +54,7 @@ void loop()
   // Serial.print((int)state);
   // Serial.print(" ");
 
-  // Serial.println(innerBaro.getDataInMeters());
+  Serial.println(innerBaro.altitude);
 
   switch (state)
   {
@@ -67,7 +67,7 @@ void loop()
   {
     buzzer.buzz();
 
-    if (accel.getData().lenght() > 2)
+    if (accel.getData().lenght() > TOOK_OFF_THRESHOLD)
     {
       state = States::flying;
       launchTimer.start();
@@ -88,15 +88,14 @@ void loop()
       // recovery.deploy(Recovery::TriggeredBy::Timer);
       // }
 
-      // if (innerBaro.getDataInMeters() < ALTITUDE_TO_OPEN_PARACHUTE)
-      // {
-      // recovery.deploy(Recovery::TriggeredBy::Altitude);
-      // }
+      if (innerBaro.getDataInMeters() < ALTITUDE_TO_OPEN_PARACHUTE)
+      {
+        recovery.deploy(Recovery::TriggeredBy::Altitude);
+      }
       if (ahrs.rotations.x > ROTATION_X_THRESHOLD or ahrs.rotations.x < -ROTATION_X_THRESHOLD or ahrs.rotations.y > ROTATION_Y_THRESHOLD)
       {
-        // state = States::landing;
-        Serial.println("sex");
-        // recovery.deploy(Recovery::TriggeredBy::Rotation);
+        state = States::landing;
+        recovery.deploy(Recovery::TriggeredBy::Rotation);
       }
     }
 
@@ -104,7 +103,7 @@ void loop()
   }
   case States::landing:
   {
-    if (accel.getData().lenght() < 2)
+    if (accel.getData().lenght() < LANDING_THRESHOLD)
     {
       state = States::landed;
     }
@@ -121,7 +120,7 @@ void loop()
   }
 
   ahrs.update(accel.getData(), gyro.getData(), mag.getData());
-
+  innerBaro.getData();
   // // print everything
   // Serial.print("Accel: ");
   // Serial.print(accel.getData().x);
