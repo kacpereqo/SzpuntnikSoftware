@@ -36,125 +36,140 @@ enum class States
 void loop()
 {
 
-  // static Disk disk;
-  static Buzzer buzzer;
-  static Accelerometer accel(Accelerometer::Hz416, Accelerometer::g2);
-  static Gyroscope gyro(Gyroscope::Hz416, Gyroscope::dps2000);
-  static Magnetometer mag(Magnetometer::Hz80, Magnetometer::gauss4);
-  static InnerBarometer innerBaro;
-  static Recovery recovery;
+  static Disk disk;
 
-  static Ahrs ahrs;
+  static Vec3<float> acc{random(0, 10), random(0, 10), random(0, 10)};
+  static Vec3<float> gyro{1, 2, 3};
+  static Vec3<float> mag{1, 2, 3};
+  static Vec3<float> rotation{1, 2, 3};
 
-  static Timer blockTimer;
-  static Timer launchTimer;
+  DiskData data{
+      acc,
+      gyro,
+      mag,
+      rotation,
+      1,
+      2,
 
-  static States state = States::flying;
+      millis()};
+  // disk.save(data);
+  disk.read();
+  // static Buzzer buzzer;
+  // static Accelerometer accel(Accelerometer::Hz416, Accelerometer::g2);
+  // static Gyroscope gyro(Gyroscope::Hz416, Gyroscope::dps2000);
+  // static Magnetometer mag(Magnetometer::Hz80, Magnetometer::gauss4);
+  // static InnerBarometer innerBaro;
+  // static Recovery recovery;
 
-  recovery.test();
+  // static Ahrs ahrs;
 
-  switch (state)
-  {
-  case States::calibrating:
-  {
-    gyro.calibrate();
-    state = States::readyToTakeOff;
-  }
-  case States::readyToTakeOff:
-  {
-    buzzer.buzz();
+  // static Timer blockTimer;
+  // static Timer launchTimer;
 
-    if (accel.getData().lenght() > TOOK_OFF_THRESHOLD)
-    {
-      state = States::flying;
-      launchTimer.start();
-      blockTimer.start();
-      buzzer.stop();
-    }
-    break;
-  }
+  // static States state = States::flying;
 
-  case States::flying:
-  {
+  // recovery.test();
 
-    if (blockTimer.doesTimeElapsed(BLOCK_PARACHUTE_TIME))
-    {
-      if (launchTimer.doesTimeElapsed(TIME_TO_OPEN_PARACHUTE))
-      {
-        state = States::landing;
-        recovery.deploy(Recovery::TriggeredBy::Timer);
-      }
+  // switch (state)
+  // {
+  // case States::calibrating:
+  // {
+  //   gyro.calibrate();
+  //   state = States::readyToTakeOff;
+  // }
+  // case States::readyToTakeOff:
+  // {
+  //   buzzer.buzz();
 
-      if (innerBaro.altitude < ALTITUDE_TO_OPEN_PARACHUTE)
-      {
-        recovery.deploy(Recovery::TriggeredBy::Altitude);
-      }
-      if (ahrs.rotations.x > ROTATION_X_THRESHOLD or ahrs.rotations.x < -ROTATION_X_THRESHOLD or ahrs.rotations.y > ROTATION_Y_THRESHOLD)
-      {
-        state = States::landing;
-        recovery.deploy(Recovery::TriggeredBy::Rotation);
-      }
-    }
+  //   if (accel.getData().lenght() > TOOK_OFF_THRESHOLD)
+  //   {
+  //     state = States::flying;
+  //     launchTimer.start();
+  //     blockTimer.start();
+  //     buzzer.stop();
+  //   }
+  //   break;
+  // }
 
-    break;
-  }
-  case States::landing:
-  {
-    if (accel.getData().lenght() < LANDING_THRESHOLD)
-    {
-      state = States::landed;
-    }
-    break;
-  }
-  case States::landed:
-  {
-    buzzer.playNyanCat();
-  }
-  default:
-  {
-    break;
-  }
-  }
+  // case States::flying:
+  // {
 
-  ahrs.update(accel.getData(), gyro.getData(), mag.getData());
-  innerBaro.getData();
-  // // print everything
-  // Serial.print("Accel: ");
-  // Serial.print(accel.getData().x);
-  // Serial.print(" ");
-  // Serial.print(accel.getData().y);
-  // Serial.print(" ");
-  // Serial.print(accel.getData().z);
+  //   if (blockTimer.doesTimeElapsed(BLOCK_PARACHUTE_TIME))
+  //   {
+  //     if (launchTimer.doesTimeElapsed(TIME_TO_OPEN_PARACHUTE))
+  //     {
+  //       state = States::landing;
+  //       recovery.deploy(Recovery::TriggeredBy::Timer);
+  //     }
 
-  // Serial.print("|");
+  //     if (innerBaro.altitude < ALTITUDE_TO_OPEN_PARACHUTE)
+  //     {
+  //       recovery.deploy(Recovery::TriggeredBy::Altitude);
+  //     }
+  //     if (ahrs.rotations.x > ROTATION_X_THRESHOLD or ahrs.rotations.x < -ROTATION_X_THRESHOLD or ahrs.rotations.y > ROTATION_Y_THRESHOLD)
+  //     {
+  //       state = States::landing;
+  //       recovery.deploy(Recovery::TriggeredBy::Rotation);
+  //     }
+  //   }
 
-  // Serial.print("Gyro: ");
-  // Serial.print(gyro.getData().x);
-  // Serial.print(" ");
-  // Serial.print(gyro.getData().y);
-  // Serial.print(" ");
-  // Serial.print(gyro.getData().z);
+  //   break;
+  // }
+  // case States::landing:
+  // {
+  //   if (accel.getData().lenght() < LANDING_THRESHOLD)
+  //   {
+  //     state = States::landed;
+  //   }
+  //   break;
+  // }
+  // case States::landed:
+  // {
+  //   buzzer.playNyanCat();
+  // }
+  // default:
+  // {
+  //   break;
+  // }
+  // }
 
-  // Serial.print("|");
+  // ahrs.update(accel.getData(), gyro.getData(), mag.getData());
+  // innerBaro.getData();
+  // // // print everything
+  // // Serial.print("Accel: ");
+  // // Serial.print(accel.getData().x);
+  // // Serial.print(" ");
+  // // Serial.print(accel.getData().y);
+  // // Serial.print(" ");
+  // // Serial.print(accel.getData().z);
 
-  // Serial.print("Mag: ");
-  // Serial.print(mag.getData().x);
-  // Serial.print(" ");
-  // Serial.print(mag.getData().y);
-  // Serial.print(" ");
-  // Serial.print(mag.getData().z);
+  // // Serial.print("|");
 
-  // Serial.print("|");
+  // // Serial.print("Gyro: ");
+  // // Serial.print(gyro.getData().x);
+  // // Serial.print(" ");
+  // // Serial.print(gyro.getData().y);
+  // // Serial.print(" ");
+  // // Serial.print(gyro.getData().z);
 
-  // Serial.print("Rotations: ");
-  // Serial.print(",");
-  // Serial.print(ahrs.rotations.y * 180.0 / M_PI);
-  // Serial.print(",");
-  // Serial.print(180);
-  // Serial.print(",");
-  // Serial.print(-180);
+  // // Serial.print("|");
 
-  // Serial.println();
+  // // Serial.print("Mag: ");
+  // // Serial.print(mag.getData().x);
+  // // Serial.print(" ");
+  // // Serial.print(mag.getData().y);
+  // // Serial.print(" ");
+  // // Serial.print(mag.getData().z);
 
-  delay(1000.0 / 200.0);
+  // // Serial.print("|");
+
+  // // Serial.print("Rotations: ");
+  // // Serial.print(",");
+  // // Serial.print(ahrs.rotations.y * 180.0 / M_PI);
+  // // Serial.print(",");
+  // // Serial.print(180);
+  // // Serial.print(",");
+  // // Serial.print(-180);
+
+  // // Serial.println();
 }

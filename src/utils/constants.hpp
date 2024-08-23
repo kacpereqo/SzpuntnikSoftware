@@ -21,3 +21,7 @@ constexpr uint8_t BUZZER_PIN = D5;
 
 // path: src/parachute.hpp
 constexpr uint8_t RECOVERY_SERVO_PIN = D6;
+
+// path: src/disk.hpp
+constexpr uint8_t SDCARD_PIN = D4;
+constexpr size_t BUFFER_SIZE = 10;
