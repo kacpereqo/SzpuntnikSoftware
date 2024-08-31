@@ -12,10 +12,10 @@ private:
   Vec3<int16_t> min_values_raw;
 
   Vec3<int16_t> raw;
-  Vec3<float> data;
   LIS3MDL &sensor;
 
 public:
+  Vec3<float> data;
   enum MagScale : uint8_t
   {
     gauss4,

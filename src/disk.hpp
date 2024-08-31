@@ -1,3 +1,5 @@
+#pragma once
+
 #include "vec.hpp"
 #include <SD.h>
 #include <SPI.h>
@@ -9,7 +11,6 @@ struct DiskData
   Vec3<float> acc;
   Vec3<float> gyro;
   Vec3<float> mag;
-  Vec3<float> rotation;
   float altitude;
   float pressure_1;
   float pressure_2;
@@ -36,6 +37,20 @@ public:
 
     this->file = SD.open("data.bin", FILE_WRITE);
     if (!file)
+    {
+      Serial.println("error opening file");
+    }
+  }
+
+  void flush()
+  {
+    if (this->file)
+    {
+      file.write((uint8_t *)&buffer, sizeof(DiskData) * BUFFER_SIZE);
+      this->file.flush();
+      this->saveCounter = 0;
+    }
+    else
     {
       Serial.println("error opening file");
     }

@@ -9,10 +9,10 @@ class Accelerometer : public Sensor
 private:
   Vec3<int16_t> offset_raw;
   Vec3<int16_t> raw;
-  Vec3<float> data;
   LSM6 &sensor;
 
 public:
+  Vec3<float> data;
   enum AccelScale : uint8_t
   {
     g2,

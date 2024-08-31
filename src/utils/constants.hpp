@@ -1,6 +1,8 @@
 #pragma once
 
 #include <cstddef>
+#include <cstdint>
+#include <Arduino.h>
 
 // for calibration purposes
 constexpr size_t CALIBRATION_SAMPLES = 100;
@@ -15,6 +17,11 @@ constexpr uint32_t BLOCK_PARACHUTE_TIME = 0;         // millis
 constexpr float ALTITUDE_TO_OPEN_PARACHUTE = 250.0f; // meters
 constexpr float ROTATION_X_THRESHOLD = 50.0f;
 constexpr float ROTATION_Y_THRESHOLD = -30.0f;
+
+constexpr uint32_t SPI_FLASH_BLOCK_SIZE = 65536;
+constexpr uint8_t SPI_FLASH_CS_PIN = 10;
+constexpr uint32_t SPI_FLASH_MEMORY_SIZE = 16777216;
+constexpr uint32_t SPI_FLASH_SECTOR_SIZE = 4096;
 
 // path: src/buzzer.hpp
 constexpr uint8_t BUZZER_PIN = D5;
