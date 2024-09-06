@@ -10,10 +10,14 @@ struct DiskData
 {
   Vec3<float> acc;
   Vec3<float> gyro;
-  Vec3<float> mag;
+  Vec3<uint16_t> mag;
   float altitude;
-  float pressure_1;
-  float pressure_2;
+  float pressure_inner;
+  float pressure_outer;
+  float temperature_inner;
+  float temperature_outer;
+  float humidity_inner;
+  float humidity_outer;
   time_t timestamp;
 };
 

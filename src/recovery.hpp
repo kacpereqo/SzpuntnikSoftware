@@ -3,10 +3,10 @@
 
 class Recovery
 {
-private:
-    Servo servo;
+    // private:
 
 public:
+    Servo servo;
     enum TriggeredBy
     {
         Timer,

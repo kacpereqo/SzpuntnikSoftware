@@ -43,9 +43,9 @@ Vec3<float> &Accelerometer::getData()
   (void)this->getRawData();
 
   this->data = {
-      (this->raw.x - offset_raw.x) / this->scale_factor,
-      (this->raw.y - offset_raw.y) / this->scale_factor,
-      (this->raw.z - offset_raw.z) / this->scale_factor,
+      (this->raw.x - offset_raw.x) / this->scale_factor / 16,
+      (this->raw.y - offset_raw.y) / this->scale_factor / 16,
+      (this->raw.z - offset_raw.z) / this->scale_factor / 16,
   };
 
   return data;

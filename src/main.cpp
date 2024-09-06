@@ -24,43 +24,54 @@ enum class States
   test = 6,
 };
 
+bool safetyPin = false;
+bool safetyPinLoop = false;
+
 void setup()
 {
+
+  pinMode(D2, INPUT_PULLUP);
+  Recovery recovery;
+
   Serial.begin(115200);
 
-  while (!Serial)
+  do
+  {
+    safetyPin = digitalRead(D2);
+    Serial.println(safetyPin);
+  } while (safetyPin == 0);
+  recovery.servo.write(140);
 
-    Wire.begin();
+  Wire.begin();
   Flash flash;
   Buzzer buzzer;
-  Accelerometer accel(Accelerometer::Hz416, Accelerometer::g2);
-  Gyroscope gyro(Gyroscope::Hz416, Gyroscope::dps2000);
+  Accelerometer accel(Accelerometer::Hz1660, Accelerometer::g16);
+  Gyroscope gyro(Gyroscope::Hz1660, Gyroscope::dps2000);
   Magnetometer mag(Magnetometer::Hz80, Magnetometer::gauss4);
-  // InnerBarometer innerBaro;
-  Recovery recovery;
+  Barometer innerBaro(0x77);
+  Barometer outerBaro;
 
   Ahrs ahrs;
 
   Timer blockTimer;
   Timer launchTimer;
 
-  States state = States::flying;
-
-  // flash.printHumanReadable();
-  // Serial.println(flash.address / sizeof(DiskData));
-  // Serial.println(flash.address - SPI_FLASH_MEMORY_SIZE);
+  States state = States::calibrating;
 
   DiskData data;
-  SerialFlash.read(flash.address - sizeof(DiskData), &data, sizeof(DiskData));
-  Serial.print(data.timestamp);
-  // 16 777 216
-  //  451 872
-
-  while (true)
-    ;
 
   while (true)
   {
+    do
+    {
+
+      safetyPin = digitalRead(D2);
+      if (safetyPin == LOW)
+      {
+        safetyPinLoop = true;
+      }
+    } while (safetyPinLoop == false);
+
     switch (state)
     {
     case States::calibrating:
@@ -72,7 +83,8 @@ void setup()
     {
       buzzer.buzz();
 
-      if (accel.getData().lenght() > TOOK_OFF_THRESHOLD)
+      Serial.println(accel.data.lenght());
+      if (accel.data.lenght() > TOOK_OFF_THRESHOLD)
       {
         state = States::flying;
         launchTimer.start();
@@ -92,85 +104,54 @@ void setup()
           state = States::landing;
           recovery.deploy(Recovery::TriggeredBy::Timer);
         }
-
-        // if (innerBaro.altitude < ALTITUDE_TO_OPEN_PARACHUTE)
-        // {
-        // recovery.deploy(Recovery::TriggeredBy::Altitude);
-        // }
-        if (ahrs.rotations.x > ROTATION_X_THRESHOLD or ahrs.rotations.x < -ROTATION_X_THRESHOLD or ahrs.rotations.y > ROTATION_Y_THRESHOLD)
-        {
-          state = States::landing;
-          recovery.deploy(Recovery::TriggeredBy::Rotation);
-        }
       }
 
       break;
     }
     case States::landing:
     {
-      if (accel.getData().lenght() < LANDING_THRESHOLD)
-      {
-        state = States::landed;
-      }
+      // buzzer.playNyanCat();
+      buzzer.buzz();
       break;
-    }
-    case States::landed:
-    {
-      buzzer.playNyanCat();
     }
     default:
     {
       break;
     }
     }
-    ahrs.update(accel.getData(), gyro.getData(), mag.getData());
+
+    // not using due to the fact mateusz is MAD!!!
+    // ahrs.update(accel.data, gyro.data, mag.data);
 
     DiskData data;
 
     data.acc = accel.data;
     data.gyro = gyro.data;
-    data.mag = mag.data;
-    data.altitude = 0;
-    data.pressure_1 = 0;
-    data.pressure_2 = 0;
+    data.mag.x = mag.raw.x;
+    data.mag.y = mag.raw.y;
+    data.mag.z = mag.raw.z;
+    data.pressure_inner = innerBaro.pressure;
+    data.pressure_outer = outerBaro.pressure;
+    data.humidity_inner = innerBaro.humidity;
+    data.humidity_outer = outerBaro.humidity;
+    data.temperature_inner = innerBaro.temperature;
+    data.temperature_outer = outerBaro.temperature;
     data.timestamp = millis();
 
     flash.write(&data);
+    // Serial.println(data.timestamp);
 
-    // innerBaro.getData();
-    // // print everything
-    // Serial.print("Accel: ");
-    // Serial.print(accel.getData().x);
+    // Serial.print(accel.data.x);
     // Serial.print(" ");
-    // Serial.print(accel.getData().y);
+    // Serial.print(accel.data.y);
     // Serial.print(" ");
-    // Serial.print(accel.getData().z);
 
-    // Serial.print("|");
+    innerBaro.getData();
+    outerBaro.getData();
 
-    // Serial.print("Gyro: ");
-    // Serial.print(gyro.getData().x);
-    // Serial.print(" ");
-    // Serial.print(gyro.getData().y);
-    // Serial.print(" ");
-    // Serial.print(gyro.getData().z);
-
-    // Serial.print("|");
-
-    // Serial.print("Mag: ");
-    // Serial.print(mag.getData().x);
-    // Serial.print(" ");
-    // Serial.print(mag.getData().y);
-    // Serial.print(" ");
-    // Serial.print(mag.getData().z);
-
-    // Serial.print("|");
-
-    Serial.print("Rotations: ");
-    Serial.print(ahrs.rotations.y);
-    Serial.println();
-
-    // Serial.println();
+    accel.getData();
+    gyro.getData();
+    mag.getData();
   }
 }
 

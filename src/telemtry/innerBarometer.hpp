@@ -4,7 +4,7 @@
 #include <BME280I2C.h>
 #include <Wire.h>
 
-class InnerBarometer
+class Barometer
 {
 public:
     float referencePressure = 1013.15f;
@@ -23,7 +23,7 @@ public:
 
     BME280I2C bme;
 
-    InnerBarometer()
+    Barometer(uint8_t address = 0x76)
     {
         BME280I2C::Settings settings(
             BME280::OSR_X1,
@@ -34,6 +34,10 @@ public:
             BME280::Filter_16,
             BME280::SpiEnable_False,
             BME280I2C::I2CAddr_0x76);
+        if (address == 0x77)
+        {
+            settings.bme280Addr = BME280I2C::I2CAddr_0x77;
+        }
 
         this->bme = BME280I2C(settings);
 
@@ -62,11 +66,5 @@ public:
     void getData()
     {
         bme.read(this->pressure, this->temperature, this->humidity, this->temperatureUnit, this->pressureUnit);
-        this->altitude = getAltitude() - this->initAltitude;
-    }
-
-    float getAltitude()
-    {
-        return EnvironmentCalculations::Altitude(this->pressure, EnvironmentCalculations::AltitudeUnit::AltitudeUnit_Meters, this->referencePressure, this->outdoorTemp, EnvironmentCalculations::TempUnit::TempUnit_Celsius);
     }
 };

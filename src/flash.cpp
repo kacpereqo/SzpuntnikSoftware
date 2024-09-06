@@ -104,12 +104,14 @@ void Flash::dumpToSD(Disk &disk)
 
 void Flash::eraseAll()
 {
-    SerialFlash.eraseAll();
 
+    SerialFlash.eraseAll();
+    Serial.println("Erasing flash memory");
     while (SerialFlash.ready() == false)
         ;
 
     address = 0;
+    Serial.println("Flash memory erased");
 }
 
 void Flash::printHumanReadable()
@@ -144,9 +146,17 @@ void Flash::printHumanReadable()
         Serial.print(" Altitude: ");
         Serial.print(diskData->altitude);
         Serial.print(" Pressure 1: ");
-        Serial.print(diskData->pressure_1);
+        Serial.print(diskData->pressure_inner);
         Serial.print(" Pressure 2: ");
-        Serial.print(diskData->pressure_2);
+        Serial.print(diskData->pressure_outer);
+        Serial.print(" Temp 1: ");
+        Serial.print(diskData->temperature_inner);
+        Serial.print(" Temp 2: ");
+        Serial.print(diskData->temperature_outer);
+        Serial.print(" Hum 1: ");
+        Serial.print(diskData->humidity_inner);
+        Serial.print(" Hum 2: ");
+        Serial.print(diskData->humidity_outer);
         Serial.print(" Timestamp: ");
         Serial.println(diskData->timestamp);
 
