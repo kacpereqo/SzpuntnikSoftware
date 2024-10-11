@@ -52,7 +52,6 @@ public:
         float tempAltitude = 0;
 
         getData();
-        delay(100);
 
         for (size_t i = 0; i < 10; i++)
         {

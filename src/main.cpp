@@ -24,137 +24,155 @@ enum class States
   test = 6,
 };
 
-bool safetyPin = false;
-bool safetyPinLoop = false;
-
 void setup()
 {
 
   pinMode(D2, INPUT_PULLUP);
   Recovery recovery;
 
+  Flash flash;
   Serial.begin(115200);
+  while (!Serial)
+    ;
+  ;
 
+  // flash.eraseAll();
+  // while (!SerialFlash.ready())
+  // ;
+
+  // Serial.println("done");
+
+  // flash.printHumanReadable();
+  // while (true)
+  bool safetyPin = false;
+  bool safetyPinLoop = false;
+
+sex:
   do
   {
     safetyPin = digitalRead(D2);
-    Serial.println(safetyPin);
   } while (safetyPin == 0);
   recovery.servo.write(140);
 
-  Wire.begin();
-  Flash flash;
-  Buzzer buzzer;
-  Accelerometer accel(Accelerometer::Hz1660, Accelerometer::g16);
-  Gyroscope gyro(Gyroscope::Hz1660, Gyroscope::dps2000);
-  Magnetometer mag(Magnetometer::Hz80, Magnetometer::gauss4);
-  Barometer innerBaro(0x77);
-  Barometer outerBaro;
-
-  Ahrs ahrs;
-
-  Timer blockTimer;
-  Timer launchTimer;
-
-  States state = States::calibrating;
-
-  DiskData data;
-
-  while (true)
   {
-    do
-    {
+    Wire.begin();
+    Buzzer buzzer;
+    Accelerometer accel(Accelerometer::Hz416, Accelerometer::g2);
+    Gyroscope gyro(Gyroscope::Hz416, Gyroscope::dps245);
+    Magnetometer mag(Magnetometer::Hz80, Magnetometer::gauss4);
+    Barometer innerBaro(0x77);
+    // Barometer outerBaro;
 
-      safetyPin = digitalRead(D2);
-      if (safetyPin == LOW)
-      {
-        safetyPinLoop = true;
-      }
-    } while (safetyPinLoop == false);
+    Ahrs ahrs;
 
-    switch (state)
-    {
-    case States::calibrating:
-    {
-      gyro.calibrate();
-      state = States::readyToTakeOff;
-    }
-    case States::readyToTakeOff:
-    {
-      buzzer.buzz();
+    Timer blockTimer;
+    Timer launchTimer;
 
-      Serial.println(accel.data.lenght());
-      if (accel.data.lenght() > TOOK_OFF_THRESHOLD)
-      {
-        state = States::flying;
-        launchTimer.start();
-        blockTimer.start();
-        buzzer.stop();
-      }
-      break;
-    }
-
-    case States::flying:
-    {
-
-      if (blockTimer.doesTimeElapsed(BLOCK_PARACHUTE_TIME))
-      {
-        if (launchTimer.doesTimeElapsed(TIME_TO_OPEN_PARACHUTE))
-        {
-          state = States::landing;
-          recovery.deploy(Recovery::TriggeredBy::Timer);
-        }
-      }
-
-      break;
-    }
-    case States::landing:
-    {
-      // buzzer.playNyanCat();
-      buzzer.buzz();
-      break;
-    }
-    default:
-    {
-      break;
-    }
-    }
-
-    // not using due to the fact mateusz is MAD!!!
-    // ahrs.update(accel.data, gyro.data, mag.data);
+    States state = States::calibrating;
 
     DiskData data;
 
-    data.acc = accel.data;
-    data.gyro = gyro.data;
-    data.mag.x = mag.raw.x;
-    data.mag.y = mag.raw.y;
-    data.mag.z = mag.raw.z;
-    data.pressure_inner = innerBaro.pressure;
-    data.pressure_outer = outerBaro.pressure;
-    data.humidity_inner = innerBaro.humidity;
-    data.humidity_outer = outerBaro.humidity;
-    data.temperature_inner = innerBaro.temperature;
-    data.temperature_outer = outerBaro.temperature;
-    data.timestamp = millis();
+    while (true)
+    {
+      Serial.println((int)state);
 
-    flash.write(&data);
-    // Serial.println(data.timestamp);
+      do
+      {
 
-    // Serial.print(accel.data.x);
-    // Serial.print(" ");
-    // Serial.print(accel.data.y);
-    // Serial.print(" ");
+        safetyPin = digitalRead(D2);
+        if (safetyPin == LOW)
+        {
+          safetyPinLoop = true;
+        }
+      } while (safetyPinLoop == false);
 
-    innerBaro.getData();
-    outerBaro.getData();
+      switch (state)
+      {
+      case States::calibrating:
+      {
+        gyro.calibrate();
+        state = States::readyToTakeOff;
+      }
+      case States::readyToTakeOff:
+      {
 
-    accel.getData();
-    gyro.getData();
-    mag.getData();
+        buzzer.buzz();
+
+        if (accel.data.lenght() > TOOK_OFF_THRESHOLD)
+        {
+          state = States::flying;
+          launchTimer.start();
+          blockTimer.start();
+          buzzer.stop();
+        }
+        break;
+      }
+
+      case States::flying:
+      {
+
+        if (blockTimer.doesTimeElapsed(BLOCK_PARACHUTE_TIME))
+        {
+          if (launchTimer.doesTimeElapsed(TIME_TO_OPEN_PARACHUTE))
+          {
+            state = States::landing;
+            recovery.deploy(Recovery::TriggeredBy::Timer);
+          }
+        }
+
+        break;
+      }
+      case States::landing:
+      {
+        for (;;)
+        {
+          if (digitalRead(D2) == LOW)
+          {
+
+            goto sex;
+          }
+          // buzzer.playNyanCat();
+          // buzzer.buzz();
+          break;
+        }
+      default:
+      {
+        break;
+      }
+      }
+
+        // not using due to the fact mateusz is MAD!!!
+        // ahrs.update(accel.data, gyro.data, mag.data);
+
+        //   DiskData data;
+
+        //   data.acc = accel.data;
+        //   data.gyro = gyro.data;
+        //   data.mag.x = mag.raw.x;
+        //   data.mag.y = mag.raw.y;
+        //   data.mag.z = mag.raw.z;
+        //   data.pressure_inner = innerBaro.pressure;
+        //   data.pressure_outer = outerBaro.pressure;
+        //   data.humidity_inner = innerBaro.humidity;
+        //   data.humidity_outer = outerBaro.humidity;
+        //   data.temperature_inner = innerBaro.temperature;
+        //   data.temperature_outer = outerBaro.temperature;
+        //   data.timestamp = millis();
+
+        //   flash.write(&data);
+
+        //   innerBaro.getData();
+        //   outerBaro.getData();
+
+        accel.getData();
+        gyro.getData();
+        mag.getData();
+        //
+
+        // delay(100);
+      }
+    }
   }
-}
-
-void loop()
-{
-}
+  void loop()
+  {
+  }
